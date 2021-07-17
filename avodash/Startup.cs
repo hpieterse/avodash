@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using avodash.Data;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -22,6 +23,8 @@ namespace avodash
         {
 
             services.AddControllersWithViews();
+
+            services.AddSingleton<IDataStore, DataStore>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -56,6 +59,13 @@ namespace avodash
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
+
+            // setup data store
+            using(var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var dataStore = serviceScope.ServiceProvider.GetRequiredService<IDataStore>();
+                dataStore.Initialise();
+            }
 
             app.UseSpa(spa =>
             {
