@@ -37,17 +37,18 @@ namespace avodash.Controllers
 
             var filterRegions = filterQuery.Regions?.Any() ?? false;
             var filterProductionTypes = filterQuery.ProductionTypes?.Any() ?? false;
-
             var filterStartDate = filterQuery.StartDate != null;
             var filterEndDate = filterQuery.EndDate != null;
+            var excludeRegions = filterQuery.ExcludedRegions?.Any() ?? false;
 
-            var topRegionQuery1 = _dataStore.Data
+            var topRegions = _dataStore.Data
                 .Where(m => (!filterStartDate || m.Date >= filterQuery.StartDate)
                     && (!filterEndDate || m.Date <= filterQuery.EndDate)
                     && (!filterRegions || filterQuery.Regions.Any(r => r == m.Region))
                     && (!filterProductionTypes || filterQuery.ProductionTypes.Any(p => p == m.ProductionType))
-                );
-            var q2 = topRegionQuery1.GroupBy(measurement => measurement.Region)
+                    && (!excludeRegions || filterQuery.ExcludedRegions.All(r => r != m.Region))
+                )
+                .GroupBy(measurement => measurement.Region)
                 .Select((grouping) => new TopRegion
                 {
                     Region = grouping.Key,
@@ -62,8 +63,8 @@ namespace avodash.Controllers
                                 + (includeSmallBag ? m.SmallBags : 0)
                                 + (includeXLargeBag ? m.XLargeBags : 0)),
                     AveragePrice = grouping.Average(m => m.AveragePrice)
-                });
-            var topRegions = q2.OrderByDescending(c => c.TotalVolume)
+                })
+                .OrderByDescending(c => c.TotalVolume)
                 .Take(10);
 
             return Task.FromResult(topRegions);

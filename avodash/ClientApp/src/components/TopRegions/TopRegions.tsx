@@ -12,26 +12,31 @@ const TopRegions = () => {
 
   const isReady = dataReady && isMetaDataReady;
 
-  const addRegionFilter = (region: string) => {
-    if(filterValues == null){
+  const addRegionFilter = (region: string, exclude: boolean = false) => {
+    if (filterValues == null) {
       return;
     }
-    setFilterValues({
-      ...filterValues,
-      regions : [
-        ...filterValues.regions,
-        region,
-      ]
-    });
+    if (exclude) {
+      setFilterValues({
+        ...filterValues,
+        excludedRegions: [...filterValues.excludedRegions, region],
+      });
+    } else {
+      setFilterValues({
+        ...filterValues,
+        regions: [...filterValues.regions, region],
+      });
+    }
   };
 
   const removeRegionFilter = (region: string) => {
-    if(filterValues == null){
+    if (filterValues == null) {
       return;
     }
     setFilterValues({
       ...filterValues,
-      regions : filterValues.regions.filter(c => c !== region),
+      regions: filterValues.regions.filter((c) => c !== region),
+      excludedRegions: filterValues.excludedRegions.filter((c) => c !== region),
     });
   };
 
@@ -44,7 +49,12 @@ const TopRegions = () => {
         <div>
           {data.map((topRegion) => {
             const isFiltered =
-              filterValues?.regions?.some((r) => r === topRegion.region) === true;
+              filterValues?.regions?.some((r) => r === topRegion.region) ===
+                true ||
+              filterValues?.excludedRegions?.some(
+                (r) => r === topRegion.region
+              ) === true;
+
             return (
               <div key={topRegion.region}>
                 <h3>
@@ -54,18 +64,30 @@ const TopRegions = () => {
                 <p>R {topRegion.averagePrice}</p>
                 <p>{topRegion.totalVolume} tn</p>
                 {
-                  <Button
-                    id="toggle-check"
-                    type="checkbox"
-                    variant={isFiltered ? 'primary' :'outline-primary' }
-                    onClick={(e) =>
-                      isFiltered
-                        ? removeRegionFilter(topRegion.region)
-                        : addRegionFilter(topRegion.region)
-                    }
-                  >
-                    {isFiltered ? "Remove Filter" : "Add Filter"}
-                  </Button>
+                  <div>
+                    <Button
+                      id="toggle-check"
+                      type="checkbox"
+                      variant={isFiltered ? "primary" : "outline-primary"}
+                      onClick={(e) =>
+                        isFiltered
+                          ? removeRegionFilter(topRegion.region)
+                          : addRegionFilter(topRegion.region)
+                      }
+                    >
+                      {isFiltered ? "Remove Filter" : "Add Filter"}
+                    </Button>
+                    {!isFiltered ? (
+                      <Button
+                        id="toggle-check"
+                        type="checkbox"
+                        variant="outline-danger"
+                        onClick={(e) => addRegionFilter(topRegion.region, true)}
+                      >
+                        Exclude Region
+                      </Button>
+                    ) : null}
+                  </div>
                 }
               </div>
             );

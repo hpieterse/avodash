@@ -28,6 +28,9 @@ const useFilteredApi = <T extends TType>(route: string): [boolean, T] => {
       filterValues.regions.forEach(region => {
         searchParams.append("regions", region);
       });
+      filterValues.excludedRegions.forEach(region => {
+        searchParams.append("excludedRegions", region);
+      });
 
       filterValues.packageTypes.forEach(packageType => {
         searchParams.append("packageTypes", packageType.toString());

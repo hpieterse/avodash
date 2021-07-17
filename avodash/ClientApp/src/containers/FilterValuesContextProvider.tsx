@@ -15,6 +15,10 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     RouteValueKeys.regions,
     [] as Array<string>
   );
+  const [excludedRegions, setExcludedRegions] = useRouteState<Array<string>>(
+    RouteValueKeys.excludedRegions,
+    [] as Array<string>
+  );
   const [packageTypes, setPackageTypes] = useRouteState<Array<number>>(
     RouteValueKeys.packageTypes,
     [] as Array<number>
@@ -41,17 +45,18 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
       startDate: startDate == null ? null : new Date(startDate),
       endDate: endDate == null ? null : new Date(endDate),
       regions: regions,
+      excludedRegions: excludedRegions,
       packageTypes: packageTypes,
       productionTypes: productionTypes,
     });
-  }, [regions, packageTypes, productionTypes, startDate, endDate]);
+  }, [regions, excludedRegions, packageTypes, productionTypes, startDate, endDate, data]);
 
   const setDataExternal = (data: FilterQuery) => {
-    console.log("setData");
     setData(data);
     setStartDate(data.startDate?.getTime() ?? null);
     setEndDate(data.endDate?.getTime() ?? null);
     setRegions(data.regions);
+    setExcludedRegions(data.excludedRegions);
     setPackageTypes(data.packageTypes);
     setProductionTypes(data.productionTypes);
   };

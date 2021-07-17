@@ -1,8 +1,13 @@
 import React, { useMemo, useContext } from "react";
-import { Typeahead } from "react-bootstrap-typeahead";
+import { Typeahead, Token } from "react-bootstrap-typeahead";
+import Button from "react-bootstrap/Button";
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
 import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
 import { FilterItem } from "../../models/FilterItem";
+import { ReactComponent as BoxLightSvg } from "../../svg/box-light.svg";
+import { ReactComponent as MapMarkerAltLightSvg } from "../../svg/map-marker-alt-light.svg";
+import { ReactComponent as SeedlingLightSvg } from "../../svg/seedling-light.svg";
+import Styles from "./FilterSelector.module.scss";
 
 const FilterSelector = ({ className }: { className?: string }) => {
   const [isReady, metaData] = useContext(MetaDataContext);
@@ -10,7 +15,11 @@ const FilterSelector = ({ className }: { className?: string }) => {
 
   const setSelectedFilters = (selection: Array<FilterItem>) => {
     const selectedRegions = selection
-      .filter((c) => c.type === "Region")
+      .filter((c) => c.type === "Region" && c.exclude !== true)
+      .map((c) => c.key as string);
+
+    const excludedRegions = selection
+      .filter((c) => c.type === "Region" && c.exclude === true)
       .map((c) => c.key as string);
 
     const selectedPackageTypes = selection
@@ -27,44 +36,53 @@ const FilterSelector = ({ className }: { className?: string }) => {
         endDate: null,
       }),
       regions: selectedRegions,
+      excludedRegions: excludedRegions,
       packageTypes: selectedPackageTypes,
       productionTypes: selectedProductionTypes,
     });
   };
 
   const selectedValues = !isReady
-      ? []
-      : [
-          ...metaData.packageTypes
-            .filter((r) => filterValues?.packageTypes?.includes(r.key))
-            .map(
-              (p) =>
-                ({
-                  ...p,
-                  type: "PackageType",
-                } as FilterItem)
-            ),
-          ...metaData.productionTypes
-            .filter((r) => filterValues?.productionTypes?.includes(r.key))
-            .map(
-              (p) =>
-                ({
-                  ...p,
-                  type: "ProductionType",
-                } as FilterItem)
-            ),
-          ...metaData.regions
-            .filter((r) => filterValues?.regions?.includes(r.key))
-            .map(
-              (p) =>
-                ({
-                  ...p,
-                  type: "Region",
-                } as FilterItem)
-            ),
-        ];
-
-  console.log(selectedValues);
+    ? []
+    : [
+        ...metaData.packageTypes
+          .filter((r) => filterValues?.packageTypes?.includes(r.key))
+          .map(
+            (p) =>
+              ({
+                ...p,
+                type: "PackageType",
+              } as FilterItem)
+          ),
+        ...metaData.productionTypes
+          .filter((r) => filterValues?.productionTypes?.includes(r.key))
+          .map(
+            (p) =>
+              ({
+                ...p,
+                type: "ProductionType",
+              } as FilterItem)
+          ),
+        ...metaData.regions
+          .filter((r) => filterValues?.regions?.includes(r.key))
+          .map(
+            (p) =>
+              ({
+                ...p,
+                type: "Region",
+              } as FilterItem)
+          ),
+        ...metaData.regions
+          .filter((r) => filterValues?.excludedRegions?.includes(r.key))
+          .map(
+            (p) =>
+              ({
+                ...p,
+                type: "Region",
+                exclude: true,
+              } as FilterItem)
+          ),
+      ];
 
   const options = useMemo(() => {
     if (!isReady) {
@@ -72,18 +90,18 @@ const FilterSelector = ({ className }: { className?: string }) => {
     }
 
     return [
-      ...metaData.packageTypes.map(
-        (p) =>
-          ({
-            ...p,
-            type: "PackageType",
-          } as FilterItem)
-      ),
       ...metaData.productionTypes.map(
         (p) =>
           ({
             ...p,
             type: "ProductionType",
+          } as FilterItem)
+      ),
+      ...metaData.packageTypes.map(
+        (p) =>
+          ({
+            ...p,
+            type: "PackageType",
           } as FilterItem)
       ),
       ...metaData.regions.map(
@@ -95,6 +113,19 @@ const FilterSelector = ({ className }: { className?: string }) => {
       ),
     ];
   }, [isReady, metaData]);
+
+  const getIcon = (option: FilterItem) => {
+    switch (option.type) {
+      case "PackageType":
+        return <BoxLightSvg className="icon-small" />;
+      case "ProductionType":
+        return <SeedlingLightSvg className="icon-small" />;
+      case "Region":
+        return <MapMarkerAltLightSvg className="icon-small" />;
+      default:
+        return option.type;
+    }
+  };
 
   return (
     <Typeahead<FilterItem>
@@ -108,7 +139,72 @@ const FilterSelector = ({ className }: { className?: string }) => {
       options={options}
       isLoading={!isReady}
       selected={selectedValues}
-      placeholder="Search for region, production type or package type e.g. Organic, Small Bag, Houston"
+      placeholder="Search for region, production method or package type e.g. Organic, Small Bag, Houston"
+      renderMenuItemChildren={(option, props, index) => {
+        /* Render custom contents here. */
+        const getTypeText = (option: FilterItem) => {
+          switch (option.type) {
+            case "PackageType":
+              return "Package Type";
+            case "ProductionType":
+              return "Production Method";
+            default:
+              return option.type;
+          }
+        };
+
+        return (
+          <div className="pt-2 px-2 d-flex align-items-center" key={index}>
+            <div className="flex-fill">
+              <div className="d-flex align-items-center">
+                {getIcon(option)}
+                <span className={Styles.FilterOptionLabel}>{option.value}</span>
+              </div>
+              <small className="text-muted">{getTypeText(option)}</small>
+            </div>
+            <div>
+              {option.type === "Region" ? (
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedFilters([
+                      ...selectedValues,
+                      {
+                        ...option,
+                        exclude: true,
+                      },
+                    ]);
+                  }}
+                >
+                  Exclude
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        );
+      }}
+      renderToken={(option, props, index) => {
+        return (
+          <Token
+            key={index}
+            option={option}
+            onRemove={() => {
+              setSelectedFilters(selectedValues.filter((_, i) => i !== index));
+            }}
+            className={`d-flex align-items-center ${
+              option.exclude ? "bg-danger text-white" : ""
+            }`}
+          >
+            {getIcon(option)}{" "}
+            <span className={Styles.FilterOptionLabel}>
+              {option.value}
+            </span>
+          </Token>
+        );
+      }}
     />
   );
 };

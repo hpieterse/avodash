@@ -1,10 +1,8 @@
 import React, { useMemo, useContext } from "react";
-import DatePicker from "react-datepicker";
 import FilterSelector from "../FilterSelector/FilterSelector";
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
 import Styles from "./DateFilter.module.scss";
 import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
-import Form from "react-bootstrap/Form";
 import DateInput from "../DateInput/DateInput";
 
 const DataFilter = () => {
