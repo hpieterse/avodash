@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
 import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
 import { FilterItem } from "../../models/FilterItem";
-import { ReactComponent as BoxLightSvg } from "../../svg/box-light.svg";
+import { ReactComponent as BoxOpenLightSvg } from "../../svg/box-open-light.svg";
 import { ReactComponent as MapMarkerAltLightSvg } from "../../svg/map-marker-alt-light.svg";
 import { ReactComponent as SeedlingLightSvg } from "../../svg/seedling-light.svg";
 import Styles from "./FilterSelector.module.scss";
@@ -117,7 +117,7 @@ const FilterSelector = ({ className }: { className?: string }) => {
   const getIcon = (option: FilterItem) => {
     switch (option.type) {
       case "PackageType":
-        return <BoxLightSvg className="icon-small" />;
+        return <BoxOpenLightSvg className="icon-small" />;
       case "ProductionType":
         return <SeedlingLightSvg className="icon-small" />;
       case "Region":
@@ -138,7 +138,7 @@ const FilterSelector = ({ className }: { className?: string }) => {
       labelKey="value"
       options={options}
       isLoading={!isReady}
-      selected={selectedValues}
+      selected={selectedValues}      
       placeholder="Search for region, production method or package type e.g. Organic, Small Bag, Houston"
       renderMenuItemChildren={(option, props, index) => {
         /* Render custom contents here. */
@@ -179,7 +179,7 @@ const FilterSelector = ({ className }: { className?: string }) => {
                     ]);
                   }}
                 >
-                  Exclude
+                  Exclude Region
                 </Button>
               ) : null}
             </div>
