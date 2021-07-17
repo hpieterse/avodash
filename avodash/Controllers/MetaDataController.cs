@@ -29,7 +29,7 @@ namespace avodash.Controllers
             var metaData = new MetaData
             {
                 MaxDate = _dataStore.Data.Max(c => c.Date),
-                MinDate = _dataStore.Data.Max(c => c.Date),
+                MinDate = _dataStore.Data.Min(c => c.Date),
                 Regions = _dataStore.Data
                     .Select(measurement => measurement.Region).Distinct()
                     .ToDictionary(

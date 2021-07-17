@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useContext } from "react";
 import { useCallback } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
-import useMetaData from "../../hooks/useMetaData";
+import { MetaDataContext } from "../../containers/MetaDataContextProvider";
 import useRouteState from "../../hooks/useRouteState";
 import { FilterItem } from "./FilterItem";
 
@@ -9,8 +9,8 @@ type FilterSelectorItem = FilterItem<string | number>;
 type RouterFilterItemType = "p" | "pr" | "r";
 type RouteFilterItem = { i: string | number; t: RouterFilterItemType };
 
-const FilterSelector = () => {
-  const [isReady, metaData] = useMetaData();
+const FilterSelector = ({className} : { className?: string}) => {
+  const { isReady, metaData } = useContext(MetaDataContext);
   const [selectedFilters, setSelectedFilters] = useRouteState<
     Array<RouteFilterItem>
   >("f", [] as Array<RouteFilterItem>);
@@ -46,17 +46,19 @@ const FilterSelector = () => {
             switch (routeItem.t) {
               case "p":
                 return {
-                  ...metaData.packageTypes.find((i) => i.key == routeItem.i),
+                  ...metaData.packageTypes.find((i) => i.key === routeItem.i),
                   type: "PackageType",
                 } as FilterItem<number>;
               case "pr":
                 return {
-                  ...metaData.productionTypes.find((i) => i.key == routeItem.i),
+                  ...metaData.productionTypes.find(
+                    (i) => i.key === routeItem.i
+                  ),
                   type: "ProductionType",
                 } as FilterItem<number>;
               case "r":
                 return {
-                  ...metaData.regions.find((i) => i.key == routeItem.i),
+                  ...metaData.regions.find((i) => i.key === routeItem.i),
                   type: "Region",
                 } as FilterItem<string>;
               default:
@@ -97,19 +99,20 @@ const FilterSelector = () => {
   }, [isReady, metaData]);
 
   return (
-      <Typeahead<FilterSelectorItem>
-        id="data-filter"
-        multiple
-        onChange={(selected: Array<FilterSelectorItem>) => {
-          setSelectedFilters(selectionToRouteValue(selected));
-        }}
-        labelKey="value"
-        options={options}
-        isLoading={!isReady}
-        selected={selectedValues()}
-        placeholder="Search for region, production type or package type e.g. Organic, Small Bag, Houston"
-        defaultSelected={[]}
-      />
+    <Typeahead<FilterSelectorItem>
+      className={className}
+      id="data-filter"
+      multiple
+      onChange={(selected: Array<FilterSelectorItem>) => {
+        setSelectedFilters(selectionToRouteValue(selected));
+      }}
+      labelKey="value"
+      options={options}
+      isLoading={!isReady}
+      selected={selectedValues()}
+      placeholder="Search for region, production type or package type e.g. Organic, Small Bag, Houston"
+      defaultSelected={[]}
+    />
   );
 };
 

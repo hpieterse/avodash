@@ -1,6 +1,6 @@
 export interface MetaData {
-  minDate: Date;
-  maxDate: Date;
+  minDate: string;
+  maxDate: string;
   productionTypes: Array<{ key: number; value: string }>;
   regions: Array<{ key: string; value: string }>;
   packageTypes: Array<{ key: number; value: string }>;
