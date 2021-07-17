@@ -4,7 +4,8 @@ import { useRef, useCallback } from "react";
 const changeQue: Array<{ shortName: string; jsonString: string }> = [];
 let newSearchParam: URLSearchParams | null = null;
 
-const useRouteState = <T extends {}>(
+type TType = {} | null;
+const useRouteState = <T extends TType>(
   shortName: string,
   defaultValue: T
 ): [T, (newValue: T) => void] => {

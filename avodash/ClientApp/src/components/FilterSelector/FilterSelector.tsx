@@ -1,72 +1,70 @@
 import React, { useMemo, useContext } from "react";
-import { useCallback } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
-import useRouteState from "../../hooks/useRouteState";
-import { FilterItem } from "./FilterItem";
+import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
+import { FilterItem } from "../../models/FilterItem";
 
-type FilterSelectorItem = FilterItem<string | number>;
-type RouterFilterItemType = "p" | "pr" | "r";
-type RouteFilterItem = { i: string | number; t: RouterFilterItemType };
+const FilterSelector = ({ className }: { className?: string }) => {
+  const [isReady, metaData] = useContext(MetaDataContext);
+  const [filterValues, setFilterValues] = useContext(FilterValuesContext);
 
-const FilterSelector = ({className} : { className?: string}) => {
-  const { isReady, metaData } = useContext(MetaDataContext);
-  const [selectedFilters, setSelectedFilters] = useRouteState<
-    Array<RouteFilterItem>
-  >("f", [] as Array<RouteFilterItem>);
+  const setSelectedFilters = (selection: Array<FilterItem>) => {
+    const selectedRegions = selection
+      .filter((c) => c.type === "Region")
+      .map((c) => c.key as string);
 
-  const selectionToRouteValue = (
-    selection: Array<FilterSelectorItem>
-  ): Array<RouteFilterItem> => {
-    return selection.map((item) => {
-      let newType: RouterFilterItemType = "p";
-      switch (item.type) {
-        case "PackageType":
-          newType = "p";
-          break;
-        case "ProductionType":
-          newType = "pr";
-          break;
-        case "Region":
-          newType = "r";
-          break;
-      }
-      return {
-        i: item.key,
-        t: newType,
-      };
+    const selectedPackageTypes = selection
+      .filter((c) => c.type === "PackageType")
+      .map((c) => c.key as number);
+
+    const selectedProductionTypes = selection
+      .filter((c) => c.type === "ProductionType")
+      .map((c) => c.key as number);
+
+    setFilterValues({
+      ...(filterValues ?? {
+        startDate: null,
+        endDate: null,
+      }),
+      regions: selectedRegions,
+      packageTypes: selectedPackageTypes,
+      productionTypes: selectedProductionTypes,
     });
   };
 
-  const selectedValues = useCallback((): Array<FilterSelectorItem> => {
-    return !isReady
+  const selectedValues = !isReady
       ? []
-      : (selectedFilters
-          .map((routeItem) => {
-            switch (routeItem.t) {
-              case "p":
-                return {
-                  ...metaData.packageTypes.find((i) => i.key === routeItem.i),
+      : [
+          ...metaData.packageTypes
+            .filter((r) => filterValues?.packageTypes?.includes(r.key))
+            .map(
+              (p) =>
+                ({
+                  ...p,
                   type: "PackageType",
-                } as FilterItem<number>;
-              case "pr":
-                return {
-                  ...metaData.productionTypes.find(
-                    (i) => i.key === routeItem.i
-                  ),
+                } as FilterItem)
+            ),
+          ...metaData.productionTypes
+            .filter((r) => filterValues?.productionTypes?.includes(r.key))
+            .map(
+              (p) =>
+                ({
+                  ...p,
                   type: "ProductionType",
-                } as FilterItem<number>;
-              case "r":
-                return {
-                  ...metaData.regions.find((i) => i.key === routeItem.i),
+                } as FilterItem)
+            ),
+          ...metaData.regions
+            .filter((r) => filterValues?.regions?.includes(r.key))
+            .map(
+              (p) =>
+                ({
+                  ...p,
                   type: "Region",
-                } as FilterItem<string>;
-              default:
-                return null;
-            }
-          })
-          .filter((i) => i != null) as Array<FilterSelectorItem>);
-  }, [selectedFilters, metaData, isReady]);
+                } as FilterItem)
+            ),
+        ];
+
+  console.log(selectedValues);
 
   const options = useMemo(() => {
     if (!isReady) {
@@ -79,39 +77,38 @@ const FilterSelector = ({className} : { className?: string}) => {
           ({
             ...p,
             type: "PackageType",
-          } as FilterItem<number>)
+          } as FilterItem)
       ),
       ...metaData.productionTypes.map(
         (p) =>
           ({
             ...p,
             type: "ProductionType",
-          } as FilterItem<number>)
+          } as FilterItem)
       ),
       ...metaData.regions.map(
         (p) =>
           ({
             ...p,
             type: "Region",
-          } as FilterItem<string>)
+          } as FilterItem)
       ),
     ];
   }, [isReady, metaData]);
 
   return (
-    <Typeahead<FilterSelectorItem>
+    <Typeahead<FilterItem>
       className={className}
       id="data-filter"
       multiple
-      onChange={(selected: Array<FilterSelectorItem>) => {
-        setSelectedFilters(selectionToRouteValue(selected));
+      onChange={(selected: Array<FilterItem>) => {
+        setSelectedFilters(selected);
       }}
       labelKey="value"
       options={options}
       isLoading={!isReady}
-      selected={selectedValues()}
+      selected={selectedValues}
       placeholder="Search for region, production type or package type e.g. Organic, Small Bag, Houston"
-      defaultSelected={[]}
     />
   );
 };

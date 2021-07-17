@@ -1,5 +1,5 @@
-export interface FilterItem<T> {
-  key: T,
+export interface FilterItem {
+  key: string | number,
   value: string,
   type: 'PackageType' | 'Region' | 'ProductionType'
 }
