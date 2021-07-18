@@ -1,29 +1,17 @@
-import React, { useContext, useRef, useMemo } from "react";
+import React, { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
 import useFilteredApi from "../../hooks/useFilteredApi";
-import { TopRegion } from "../../models/topRegion";
+import { TopRegion } from "../../models/TopRegion";
 import formatAvocadoCount from "../../helpers/formatters";
 
 const TopRegions = ({ className }: { className?: string }) => {
-  const [dataReady, data] = useFilteredApi<Array<TopRegion>>("/dashboard/top");
-  const [isMetaDataReady, metaData] = useContext(MetaDataContext);
+  const data = useFilteredApi<Array<TopRegion>>("/dashboard/top", []);
+  const [, metaData] = useContext(MetaDataContext);
   const [filterValues, setFilterValues] = useContext(FilterValuesContext);
-
-  const isReady = dataReady && isMetaDataReady;
-
-  const dataCache = useRef(data ?? []);
-  const tableData = useMemo(() => {
-    if (!dataReady || !isReady) {
-      return dataCache.current;
-    }
-
-    dataCache.current = data;
-    return dataCache.current;
-  }, [dataReady, isReady, data]);
 
   const addRegionFilter = (region: string, exclude: boolean = false) => {
     if (filterValues == null) {
@@ -59,7 +47,7 @@ const TopRegions = ({ className }: { className?: string }) => {
         <Card.Title>Top Volume Regions</Card.Title>
         <div>
           <ListGroup variant="flush">
-            {tableData.map((topRegion, index) => {
+            {data.map((topRegion, index) => {
               const isFiltered = filterValues?.regions?.some((r) => r === topRegion.region)
                     === true
                   || filterValues?.excludedRegions?.some(

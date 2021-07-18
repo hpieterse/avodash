@@ -15,5 +15,7 @@ namespace avodash.Models
         public IEnumerable<KeyValuePair<string, string>> Regions { get; set; }
 
         public IEnumerable<KeyValuePair<int, string>> PackageTypes {get;set;}
+
+        public IEnumerable<KeyValuePair<int, string>> PackageTypeShortNames { get; set; }
     }
 }

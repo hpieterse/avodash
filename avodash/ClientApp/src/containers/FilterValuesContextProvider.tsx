@@ -5,7 +5,7 @@ import React, {
 
 import useRouteState from "../hooks/useRouteState";
 import { FilterQuery } from "../models/FilterQuery";
-import RouteValueKeys from "../models/routeValueKeys";
+import RouteValueKeys from "../models/RouteValueKeys";
 import { MetaDataContext } from "./MetaDataContextProvider";
 
 // eslint-disable-next-line no-spaced-func

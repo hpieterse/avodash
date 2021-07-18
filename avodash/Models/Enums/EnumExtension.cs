@@ -15,5 +15,14 @@ namespace avodash.Models.Enums
                             ?.GetCustomAttribute<DisplayAttribute>()
                             ?.Name ?? enumValue.ToString();
         }
+
+        public static string GetShortName(this Enum enumValue)
+        {
+            return enumValue.GetType()
+                            .GetMember(enumValue.ToString())
+                            .FirstOrDefault()
+                            ?.GetCustomAttribute<DisplayAttribute>()
+                            ?.ShortName ?? enumValue.ToString();
+        }
     }
 }

@@ -1,12 +1,14 @@
-import { useState, useContext, useEffect } from "react";
+import {
+  useState, useContext, useEffect, useRef, useMemo,
+} from "react";
 
 import { FilterValuesContext } from "../containers/FilterValuesContextProvider";
 
-type TType = {} | null;
-const useFilteredApi = <T extends TType>(route: string): [boolean, T] => {
+type TType = {};
+const useFilteredApi = <T extends TType>(route: string, defaultValue: T): T => {
   const [filterValues] = useContext(FilterValuesContext);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [data, setData] = useState<T>(null as T);
+  const [data, setData] = useState<T>(defaultValue);
 
   useEffect(() => {
     const worker = async () => {
@@ -49,7 +51,17 @@ const useFilteredApi = <T extends TType>(route: string): [boolean, T] => {
     worker();
   }, [route, filterValues]);
 
-  return [isReady, data];
+  const chartDataCache = useRef(data);
+  const chartData = useMemo(() => {
+    if (!isReady) {
+      return chartDataCache.current;
+    }
+
+    chartDataCache.current = data;
+    return chartDataCache.current;
+  }, [isReady, data]);
+
+  return chartData;
 };
 
 export default useFilteredApi;

@@ -4,4 +4,5 @@ export interface MetaData {
   productionTypes: Array<{ key: number; value: string }>;
   regions: Array<{ key: string; value: string }>;
   packageTypes: Array<{ key: number; value: string }>;
+  packageTypeShortNames: Array<{ key: number; value: string }>;
 }

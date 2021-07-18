@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { MetaData } from "../models/metaData";
+import { MetaData } from "../models/MetaData";
 
 type MetaDataContextData = [ boolean, MetaData ];
 export const MetaDataContext = createContext<MetaDataContextData>([

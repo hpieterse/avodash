@@ -5,6 +5,8 @@ import Col from "react-bootstrap/Col";
 import DataFilter from "../DataFilter/DataFilter";
 import TopRegions from "../TopRegions/TopRegions";
 import PriceOverTimeChart from "../PriceOverTimeChart/PriceOverTimeChart";
+import VolumeOverTimeChart from "../VolumeOverTimeChart/VolumeOverTimeChart";
+import VolumeVsPriceChart from "../VolumeVsPriceChart/VolumeVsPriceChart";
 import ChartContainer from "../../containers/ChartContainer/ChartContainer";
 
 const Dashboard = () => (
@@ -15,19 +17,21 @@ const Dashboard = () => (
     <Row>
       <Col xs={6} lg={8} xl={9}>
         <Row>
-          <Col xs={6} xl={4} className="pt-5">
-            <ChartContainer title="Average Price p Avocado">
+          <Col xs={6} className="pt-5">TODO</Col>
+          <Col xs={6} className="pt-5">TODO</Col>
+          <Col xs={12} className="pt-5">
+            <ChartContainer orientation="horizontal" title="Average Price p Avocado">
               <PriceOverTimeChart />
             </ChartContainer>
           </Col>
-          <Col xs={6} xl={4} className="pt-5">
-            <ChartContainer title="Average Price p Avocado">
-              <PriceOverTimeChart />
+          <Col xs={12} className="pt-5">
+            <ChartContainer orientation="horizontal" title="Total Volume">
+              <VolumeOverTimeChart />
             </ChartContainer>
           </Col>
-          <Col xs={6} xl={4} className="pt-5">
-            <ChartContainer title="Average Price p Avocado">
-              <PriceOverTimeChart />
+          <Col xs={12} className="pt-5">
+            <ChartContainer orientation="vertical" title="Volume vs Price">
+              <VolumeVsPriceChart />
             </ChartContainer>
           </Col>
         </Row>
