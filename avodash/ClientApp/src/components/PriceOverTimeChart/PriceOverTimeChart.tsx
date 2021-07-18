@@ -1,5 +1,6 @@
 import React, {
   useContext, useRef, useMemo,
+  useCallback, useEffect,
 } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import useFilteredApi from "../../hooks/useFilteredApi";
@@ -29,52 +30,69 @@ const PriceOverTimeChart = () => {
     return newData;
   }, [isMetaDataReady, isDataReady, data, metaData.productionTypes]);
 
-  const addProductionType = (productionTypeName: string) => {
-    if (filterValues == null || !isMetaDataReady) {
+  const filterValuesRef = useRef(filterValues);
+  useEffect(() => {
+    filterValuesRef.current = filterValues;
+  }, [filterValues]);
+
+  const metaDataRef = useRef({ metaData, isMetaDataReady });
+  useEffect(() => {
+    metaDataRef.current = { metaData, isMetaDataReady };
+  }, [metaData, isMetaDataReady]);
+
+  const addProductionType = useCallback((productionTypeName: string) => {
+    if (filterValuesRef.current == null || !metaDataRef.current.isMetaDataReady) {
       return;
     }
 
-    const productionType = metaData.productionTypes
+    const productionType = metaDataRef.current.metaData.productionTypes
       .find((p) => p.value === productionTypeName)?.key;
     if (productionType == null) {
       return;
     }
 
     setFilterValues({
-      ...filterValues,
+      ...filterValuesRef.current,
       productionTypes: [
-        ...(filterValues?.productionTypes ?? []),
+        ...(filterValuesRef.current?.productionTypes ?? []),
         productionType,
       ],
     });
-  };
+  }, [setFilterValues]);
 
   // determine time axis ticks
-  const timeDeltaDays = (
-    (filterValues?.endDate?.getTime() ?? 0) - (filterValues?.startDate?.getTime() ?? 0)
-  ) / (60 * 60 * 24 * 1000);
+  const { tickValues, format } = useMemo(() => {
+    const timeDeltaDays = (
+      (filterValues?.endDate?.getTime() ?? 0) - (filterValues?.startDate?.getTime() ?? 0)
+    ) / (60 * 60 * 24 * 1000);
 
-  let tickValues = "every 1 year";
-  let format = "%Y";
+    let tickValuesInternal = "every 1 year";
+    let formatInternal = "%Y";
 
-  if (timeDeltaDays < 14) {
-    tickValues = "every 1 day";
-    format = "%Y-%m-%d";
-  } else if (timeDeltaDays < 31 * 4) {
-    tickValues = "every 2 week";
-    format = "%Y-%m-%d";
-  } else if (timeDeltaDays < 365 / 2) {
-    tickValues = "every 1 month";
-    format = "%Y-%m";
-  } else if (timeDeltaDays < 365) {
-    tickValues = "every 3 month";
-    format = "%Y-%m";
-  } else if (timeDeltaDays < 600) {
-    tickValues = "every 6 month";
-    format = "%Y-%m";
-  }
+    if (timeDeltaDays < 14) {
+      tickValuesInternal = "every 1 day";
+      formatInternal = "%Y-%m-%d";
+    } else if (timeDeltaDays < 31 * 2) {
+      tickValuesInternal = "every 2 week";
+      formatInternal = "%Y-%m-%d";
+    } else if (timeDeltaDays < 365 / 2) {
+      tickValuesInternal = "every 1 month";
+      formatInternal = "%Y-%m";
+    } else if (timeDeltaDays < 365) {
+      tickValuesInternal = "every 3 month";
+      formatInternal = "%Y-%m";
+    } else if (timeDeltaDays < 600) {
+      tickValuesInternal = "every 6 month";
+      formatInternal = "%Y-%m";
+    }
 
-  return (
+    return {
+      tickValues: tickValuesInternal,
+      format: formatInternal,
+    };
+  }, [filterValues?.endDate, filterValues?.startDate]);
+
+  const chart = useMemo(() => (
     <ResponsiveLine
       data={chartData}
       curve="monotoneX"
@@ -126,7 +144,9 @@ const PriceOverTimeChart = () => {
         },
       ]}
     />
-  );
+  ), [chartData, tickValues, format, addProductionType]);
+
+  return chart;
 };
 
 export default PriceOverTimeChart;

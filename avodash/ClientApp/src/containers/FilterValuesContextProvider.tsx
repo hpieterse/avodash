@@ -1,6 +1,6 @@
 /* eslint-disable func-call-spacing */
 import React, {
-  createContext, useState, useEffect, useContext,
+  createContext, useState, useEffect, useContext, useCallback,
 } from "react";
 
 import useRouteState from "../hooks/useRouteState";
@@ -61,7 +61,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     startDate, endDate, data, isReady, metaData,
   ]);
 
-  const setDataExternal = (newData: FilterQuery) => {
+  const setDataExternal = useCallback((newData: FilterQuery) => {
     setData(newData);
     setStartDate(newData.startDate?.getTime() ?? null);
     setEndDate(newData.endDate?.getTime() ?? null);
@@ -69,7 +69,10 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     setExcludedRegions(newData.excludedRegions);
     setPackageTypes(newData.packageTypes);
     setProductionTypes(newData.productionTypes);
-  };
+  }, [
+    setData, setStartDate, setEndDate, setRegions,
+    setExcludedRegions, setPackageTypes, setProductionTypes,
+  ]);
 
   return (
     <FilterValuesContext.Provider value={[data, setDataExternal]}>

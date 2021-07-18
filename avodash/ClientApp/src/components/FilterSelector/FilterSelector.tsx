@@ -1,4 +1,4 @@
-import React, { useMemo, useContext } from "react";
+import React, { useMemo, useContext, useRef } from "react";
 import { Typeahead, Token } from "react-bootstrap-typeahead";
 import Button from "react-bootstrap/Button";
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
@@ -120,9 +120,12 @@ const FilterSelector = ({ className }: { className?: string }) => {
     }
   };
 
+  const typeAhead = useRef<Typeahead<FilterItem>>(null);
+
   return (
     <Typeahead<FilterItem>
       className={className}
+      ref={typeAhead}
       id="data-filter"
       multiple
       onChange={(selected: Array<FilterItem>) => {
@@ -170,6 +173,9 @@ const FilterSelector = ({ className }: { className?: string }) => {
                         exclude: true,
                       },
                     ]);
+                    if (typeAhead.current != null) {
+                      typeAhead.current?.toggleMenu();
+                    }
                   }}
                 >
                   Exclude Region

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useMemo } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -14,6 +14,16 @@ const TopRegions = ({ className }: { className?: string }) => {
   const [filterValues, setFilterValues] = useContext(FilterValuesContext);
 
   const isReady = dataReady && isMetaDataReady;
+
+  const dataCache = useRef(data ?? []);
+  const tableData = useMemo(() => {
+    if (!dataReady || !isReady) {
+      return dataCache.current;
+    }
+
+    dataCache.current = data;
+    return dataCache.current;
+  }, [dataReady, isReady, data]);
 
   const addRegionFilter = (region: string, exclude: boolean = false) => {
     if (filterValues == null) {
@@ -48,72 +58,68 @@ const TopRegions = ({ className }: { className?: string }) => {
       <Card.Body>
         <Card.Title>Top Volume Regions</Card.Title>
         <div>
-          {isReady === false ? (
-            <span>...Loading</span>
-          ) : (
-            <ListGroup variant="flush">
-              {data.map((topRegion, index) => {
-                const isFiltered = filterValues?.regions?.some((r) => r === topRegion.region)
+          <ListGroup variant="flush">
+            {tableData.map((topRegion, index) => {
+              const isFiltered = filterValues?.regions?.some((r) => r === topRegion.region)
                     === true
                   || filterValues?.excludedRegions?.some(
                     (r) => r === topRegion.region
                   ) === true;
 
-                return (
-                  <ListGroup.Item key={topRegion.region} className="px-0">
-                    <div>
-                      <div className="d-flex py-2">
-                        <h6 className="me-2">
-                          {index + 1}
-                          .
+              return (
+                <ListGroup.Item key={topRegion.region} className="px-0">
+                  <div>
+                    <div className="d-flex py-2">
+                      <h6 className="me-2">
+                        {index + 1}
+                        .
+                      </h6>
+                      <div>
+                        <h6>
+                          {metaData.regions.find(
+                            (r) => r.key === topRegion.region
+                          )?.value ?? topRegion.region}
                         </h6>
+                        <p className="mb-2">
+                          <span>
+                            {formatAvocadoCount(topRegion.totalVolume)}
+                          </span>
+                          <span className="text-muted"> avocados</span>
+                        </p>
                         <div>
-                          <h6>
-                            {metaData.regions.find(
-                              (r) => r.key === topRegion.region
-                            )?.value ?? topRegion.region}
-                          </h6>
-                          <p className="mb-2">
-                            <span>
-                              {formatAvocadoCount(topRegion.totalVolume)}
-                            </span>
-                            <span className="text-muted"> avocados</span>
-                          </p>
-                          <div>
+                          <Button
+                            id="add-filter"
+                            className="me-2"
+                            type="checkbox"
+                            size="sm"
+                            variant={
+                              isFiltered ? "primary" : "outline-primary"
+                            }
+                            onClick={() => (isFiltered
+                              ? removeRegionFilter(topRegion.region)
+                              : addRegionFilter(topRegion.region))}
+                          >
+                            {isFiltered ? "Remove Filter" : "Filter"}
+                          </Button>
+                          {!isFiltered ? (
                             <Button
-                              id="add-filter"
-                              className="me-2"
+                              id="exclude-filter"
                               type="checkbox"
+                              variant="outline-danger"
                               size="sm"
-                              variant={
-                                isFiltered ? "primary" : "outline-primary"
-                              }
-                              onClick={() => (isFiltered
-                                ? removeRegionFilter(topRegion.region)
-                                : addRegionFilter(topRegion.region))}
+                              onClick={() => addRegionFilter(topRegion.region, true)}
                             >
-                              {isFiltered ? "Remove Filter" : "Filter"}
+                              Exclude Region
                             </Button>
-                            {!isFiltered ? (
-                              <Button
-                                id="exclude-filter"
-                                type="checkbox"
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => addRegionFilter(topRegion.region, true)}
-                              >
-                                Exclude Region
-                              </Button>
-                            ) : null}
-                          </div>
+                          ) : null}
                         </div>
                       </div>
                     </div>
-                  </ListGroup.Item>
-                );
-              })}
-            </ListGroup>
-          )}
+                  </div>
+                </ListGroup.Item>
+              );
+            })}
+          </ListGroup>
         </div>
       </Card.Body>
     </Card>

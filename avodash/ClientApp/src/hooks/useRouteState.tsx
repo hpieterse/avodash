@@ -1,5 +1,5 @@
 import { useLocation, useHistory } from "react-router-dom";
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 
 const changeQue: Array<{ shortName: string; jsonString: string }> = [];
 let newSearchParam: URLSearchParams | null = null;
@@ -24,13 +24,24 @@ const useRouteState = <T extends TType>(
     currentValue.current = value;
   }
 
+  const historyRef = useRef(history);
+  const locationRef = useRef(location);
+
+  useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
+
+  useEffect(() => {
+    historyRef.current = history;
+  }, [history]);
+
   const setFunction = useCallback(
     async (newValue: T) => {
       if (newValue !== currentValue.current) {
         currentValue.current = newValue;
       }
 
-      newSearchParam = new URLSearchParams(location.search);
+      newSearchParam = new URLSearchParams(locationRef.current.search);
 
       const jsonString = JSON.stringify(newValue);
       changeQue.push({ shortName, jsonString });
@@ -50,13 +61,13 @@ const useRouteState = <T extends TType>(
 
       if (changeQue.length === 0) {
         // last call changes the route
-        history.push({
-          pathname: location.pathname,
+        historyRef.current.push({
+          pathname: locationRef.current.pathname,
           search: newSearchParam.toString(),
         });
       }
     },
-    [location, history, shortName]
+    [shortName]
   );
 
   return [currentValue.current, setFunction];
