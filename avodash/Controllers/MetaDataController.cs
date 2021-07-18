@@ -43,11 +43,7 @@ namespace avodash.Controllers
                     .ToDictionary(
                         packageType => (int)packageType,
                         // get display name from attributes
-                        packageType => packageType.GetType()
-                            .GetMember(packageType.ToString())
-                            .FirstOrDefault()
-                            ?.GetCustomAttribute<DisplayAttribute>()
-                            ?.Name ?? packageType.ToString()),
+                        packageType => packageType.GetName()),
 
                 ProductionTypes = Enum.GetValues(typeof(ProductionType))
                    .Cast<ProductionType>()

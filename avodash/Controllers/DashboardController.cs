@@ -35,19 +35,7 @@ namespace avodash.Controllers
             var includeSmallBag = filterQuery.PackageTypes?.Any(c => c == PackageType.SmallBag) ?? false;
             var includeXLargeBag = filterQuery.PackageTypes?.Any(c => c == PackageType.XLargeBag) ?? false;
 
-            var filterRegions = filterQuery.Regions?.Any() ?? false;
-            var filterProductionTypes = filterQuery.ProductionTypes?.Any() ?? false;
-            var filterStartDate = filterQuery.StartDate != null;
-            var filterEndDate = filterQuery.EndDate != null;
-            var excludeRegions = filterQuery.ExcludedRegions?.Any() ?? false;
-
-            var topRegions = _dataStore.Data
-                .Where(m => (!filterStartDate || m.Date >= filterQuery.StartDate)
-                    && (!filterEndDate || m.Date <= filterQuery.EndDate)
-                    && (!filterRegions || filterQuery.Regions.Any(r => r == m.Region))
-                    && (!filterProductionTypes || filterQuery.ProductionTypes.Any(p => p == m.ProductionType))
-                    && (!excludeRegions || filterQuery.ExcludedRegions.All(r => r != m.Region))
-                )
+            var topRegions = _dataStore.FilteredData(filterQuery)
                 .GroupBy(measurement => measurement.Region)
                 .Select((grouping) => new TopRegion
                 {
@@ -68,6 +56,37 @@ namespace avodash.Controllers
                 .Take(10);
 
             return Task.FromResult(topRegions);
+        }
+
+        [HttpGet]
+        [Route("[controller]/price-v-time")]
+        public Task<IEnumerable<ChartSeries<int, string, decimal>>> PriceVsTime([FromQuery] FilterQuery filterQuery)
+        {
+            var data = _dataStore.FilteredData(filterQuery)
+                .OrderBy(c => c.Date)
+                .GroupBy(measurement => new
+                {
+                    measurement.ProductionType,
+                    measurement.Date
+                })
+                .Select((grouping) => new
+                {
+                    Id = (int)grouping.Key.ProductionType,
+                    Date = grouping.Key.Date,
+                    Price = grouping.Average(m => m.AveragePrice),
+                })
+                .GroupBy(c => c.Id)
+                .Select((grouping) => new ChartSeries<int, string, decimal>
+                {
+                    Id = grouping.Key,
+                    Data = grouping.Select(m => new ChartDataPoint<string, decimal>
+                    {
+                        X = m.Date.ToString("yyyy-MM-dd"),
+                        Y = m.Price,
+                    })
+                });
+
+            return Task.FromResult(data);
         }
     }
 }

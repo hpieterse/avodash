@@ -10,6 +10,7 @@ const DateInput = ({
   max,
 }: {
   value?: Date;
+  // eslint-disable-next-line no-unused-vars
   onChange: (newValue: Date) => void;
   className?: string;
   label?: string;
@@ -68,7 +69,7 @@ const DateInput = ({
   const maxDateValue = max == null ? undefined : getDateString(max);
 
   return (
-    <Form.Control 
+    <Form.Control
       className={className}
       placeholder="yyyy-mm-dd"
       min={minDateValue}

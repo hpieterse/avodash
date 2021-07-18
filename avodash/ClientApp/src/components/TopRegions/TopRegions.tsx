@@ -53,10 +53,9 @@ const TopRegions = ({ className }: { className?: string }) => {
           ) : (
             <ListGroup variant="flush">
               {data.map((topRegion, index) => {
-                const isFiltered =
-                  filterValues?.regions?.some((r) => r === topRegion.region) ===
-                    true ||
-                  filterValues?.excludedRegions?.some(
+                const isFiltered = filterValues?.regions?.some((r) => r === topRegion.region)
+                    === true
+                  || filterValues?.excludedRegions?.some(
                     (r) => r === topRegion.region
                   ) === true;
 
@@ -64,7 +63,10 @@ const TopRegions = ({ className }: { className?: string }) => {
                   <ListGroup.Item key={topRegion.region} className="px-0">
                     <div>
                       <div className="d-flex py-2">
-                        <h6 className="me-2">{index + 1}.</h6>
+                        <h6 className="me-2">
+                          {index + 1}
+                          .
+                        </h6>
                         <div>
                           <h6>
                             {metaData.regions.find(
@@ -86,11 +88,9 @@ const TopRegions = ({ className }: { className?: string }) => {
                               variant={
                                 isFiltered ? "primary" : "outline-primary"
                               }
-                              onClick={(e) =>
-                                isFiltered
-                                  ? removeRegionFilter(topRegion.region)
-                                  : addRegionFilter(topRegion.region)
-                              }
+                              onClick={() => (isFiltered
+                                ? removeRegionFilter(topRegion.region)
+                                : addRegionFilter(topRegion.region))}
                             >
                               {isFiltered ? "Remove Filter" : "Filter"}
                             </Button>
@@ -100,9 +100,7 @@ const TopRegions = ({ className }: { className?: string }) => {
                                 type="checkbox"
                                 variant="outline-danger"
                                 size="sm"
-                                onClick={(e) =>
-                                  addRegionFilter(topRegion.region, true)
-                                }
+                                onClick={() => addRegionFilter(topRegion.region, true)}
                               >
                                 Exclude Region
                               </Button>

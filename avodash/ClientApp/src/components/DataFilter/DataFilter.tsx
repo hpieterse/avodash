@@ -9,14 +9,14 @@ const DataFilter = () => {
   const [isReady, metaData] = useContext(MetaDataContext);
   const [filterValues, setFilterValues] = useContext(FilterValuesContext);
 
-  var maxDate = useMemo(() => {
+  const maxDate = useMemo(() => {
     if (!isReady) {
       return new Date();
     }
     return new Date(Date.parse(metaData.maxDate));
   }, [isReady, metaData]);
 
-  var minDate = useMemo(() => {
+  const minDate = useMemo(() => {
     if (!isReady) {
       return new Date();
     }

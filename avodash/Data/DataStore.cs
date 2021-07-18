@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using avodash.Data.Models;
+using avodash.Models;
 using avodash.Models.Enums;
 
 namespace avodash.Data
@@ -44,5 +45,30 @@ namespace avodash.Data
 
         /// <inheritdoc/>
         public IEnumerable<AvocadoMeasurement> Data { get { return _data; } }
+
+        /// <inheritdoc/>
+        public IEnumerable<AvocadoMeasurement> FilteredData(FilterQuery filterQuery)
+        {
+            var filterOnPackageType = filterQuery.PackageTypes?.Any() ?? false;
+            var includeLargeBag = filterQuery.PackageTypes?.Any(c => c == PackageType.LargeBag) ?? false;
+            var includePLU4046 = filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4046) ?? false;
+            var includePLU4225 = filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4225) ?? false;
+            var includePLU4770 = filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4770) ?? false;
+            var includeSmallBag = filterQuery.PackageTypes?.Any(c => c == PackageType.SmallBag) ?? false;
+            var includeXLargeBag = filterQuery.PackageTypes?.Any(c => c == PackageType.XLargeBag) ?? false;
+
+            var filterRegions = filterQuery.Regions?.Any() ?? false;
+            var filterProductionTypes = filterQuery.ProductionTypes?.Any() ?? false;
+            var filterStartDate = filterQuery.StartDate != null;
+            var filterEndDate = filterQuery.EndDate != null;
+            var excludeRegions = filterQuery.ExcludedRegions?.Any() ?? false;
+
+            return Data.Where(m => (!filterStartDate || m.Date >= filterQuery.StartDate)
+                    && (!filterEndDate || m.Date <= filterQuery.EndDate)
+                    && (!filterRegions || filterQuery.Regions.Any(r => r == m.Region))
+                    && (!filterProductionTypes || filterQuery.ProductionTypes.Any(p => p == m.ProductionType))
+                    && (!excludeRegions || filterQuery.ExcludedRegions.All(r => r != m.Region))
+                );
+        }
     }
 }

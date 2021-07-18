@@ -36,7 +36,7 @@ const FilterSelector = ({ className }: { className?: string }) => {
         endDate: null,
       }),
       regions: selectedRegions,
-      excludedRegions: excludedRegions,
+      excludedRegions,
       packageTypes: selectedPackageTypes,
       productionTypes: selectedProductionTypes,
     });
@@ -45,44 +45,40 @@ const FilterSelector = ({ className }: { className?: string }) => {
   const selectedValues = !isReady
     ? []
     : [
-        ...metaData.packageTypes
-          .filter((r) => filterValues?.packageTypes?.includes(r.key))
-          .map(
-            (p) =>
-              ({
-                ...p,
-                type: "PackageType",
-              } as FilterItem)
-          ),
-        ...metaData.productionTypes
-          .filter((r) => filterValues?.productionTypes?.includes(r.key))
-          .map(
-            (p) =>
-              ({
-                ...p,
-                type: "ProductionType",
-              } as FilterItem)
-          ),
-        ...metaData.regions
-          .filter((r) => filterValues?.regions?.includes(r.key))
-          .map(
-            (p) =>
-              ({
-                ...p,
-                type: "Region",
-              } as FilterItem)
-          ),
-        ...metaData.regions
-          .filter((r) => filterValues?.excludedRegions?.includes(r.key))
-          .map(
-            (p) =>
-              ({
-                ...p,
-                type: "Region",
-                exclude: true,
-              } as FilterItem)
-          ),
-      ];
+      ...metaData.packageTypes
+        .filter((r) => filterValues?.packageTypes?.includes(r.key))
+        .map(
+          (p) => ({
+            ...p,
+            type: "PackageType",
+          } as FilterItem)
+        ),
+      ...metaData.productionTypes
+        .filter((r) => filterValues?.productionTypes?.includes(r.key))
+        .map(
+          (p) => ({
+            ...p,
+            type: "ProductionType",
+          } as FilterItem)
+        ),
+      ...metaData.regions
+        .filter((r) => filterValues?.regions?.includes(r.key))
+        .map(
+          (p) => ({
+            ...p,
+            type: "Region",
+          } as FilterItem)
+        ),
+      ...metaData.regions
+        .filter((r) => filterValues?.excludedRegions?.includes(r.key))
+        .map(
+          (p) => ({
+            ...p,
+            type: "Region",
+            exclude: true,
+          } as FilterItem)
+        ),
+    ];
 
   const options = useMemo(() => {
     if (!isReady) {
@@ -91,25 +87,22 @@ const FilterSelector = ({ className }: { className?: string }) => {
 
     return [
       ...metaData.productionTypes.map(
-        (p) =>
-          ({
-            ...p,
-            type: "ProductionType",
-          } as FilterItem)
+        (p) => ({
+          ...p,
+          type: "ProductionType",
+        } as FilterItem)
       ),
       ...metaData.packageTypes.map(
-        (p) =>
-          ({
-            ...p,
-            type: "PackageType",
-          } as FilterItem)
+        (p) => ({
+          ...p,
+          type: "PackageType",
+        } as FilterItem)
       ),
       ...metaData.regions.map(
-        (p) =>
-          ({
-            ...p,
-            type: "Region",
-          } as FilterItem)
+        (p) => ({
+          ...p,
+          type: "Region",
+        } as FilterItem)
       ),
     ];
   }, [isReady, metaData]);
@@ -138,18 +131,18 @@ const FilterSelector = ({ className }: { className?: string }) => {
       labelKey="value"
       options={options}
       isLoading={!isReady}
-      selected={selectedValues}      
+      selected={selectedValues}
       placeholder="Search for region, production method or package type e.g. Organic, Small Bag, Houston"
       renderMenuItemChildren={(option, props, index) => {
         /* Render custom contents here. */
-        const getTypeText = (option: FilterItem) => {
-          switch (option.type) {
+        const getTypeText = (o: FilterItem) => {
+          switch (o.type) {
             case "PackageType":
               return "Package Type";
             case "ProductionType":
               return "Production Method";
             default:
-              return option.type;
+              return o.type;
           }
         };
 
@@ -186,25 +179,24 @@ const FilterSelector = ({ className }: { className?: string }) => {
           </div>
         );
       }}
-      renderToken={(option, props, index) => {
-        return (
-          <Token
-            key={index}
-            option={option}
-            onRemove={() => {
-              setSelectedFilters(selectedValues.filter((_, i) => i !== index));
-            }}
-            className={`d-flex align-items-center ${
-              option.exclude ? "bg-danger text-white" : ""
-            }`}
-          >
-            {getIcon(option)}{" "}
-            <span className={Styles.FilterOptionLabel}>
-              {option.value}
-            </span>
-          </Token>
-        );
-      }}
+      renderToken={(option, props, index) => (
+        <Token
+          key={index}
+          option={option}
+          onRemove={() => {
+            setSelectedFilters(selectedValues.filter((_, i) => i !== index));
+          }}
+          className={`d-flex align-items-center ${
+            option.exclude ? "bg-danger text-white" : ""
+          }`}
+        >
+          {getIcon(option)}
+          {" "}
+          <span className={Styles.FilterOptionLabel}>
+            {option.value}
+          </span>
+        </Token>
+      )}
     />
   );
 };

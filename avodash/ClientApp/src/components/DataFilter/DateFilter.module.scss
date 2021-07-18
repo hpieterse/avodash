@@ -6,12 +6,6 @@
   @include media-breakpoint-down(lg) {
     max-width: none;
     width: 50%;
-
-    :global {
-      .react-datepicker-wrapper {
-        width: 100%;
-      }
-    }
   }
 }
 

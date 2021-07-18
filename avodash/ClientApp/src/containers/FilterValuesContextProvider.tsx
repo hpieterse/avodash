@@ -1,9 +1,12 @@
 /* eslint-disable func-call-spacing */
-import React, { createContext, useState, useEffect } from "react";
+import React, {
+  createContext, useState, useEffect, useContext,
+} from "react";
 
 import useRouteState from "../hooks/useRouteState";
 import { FilterQuery } from "../models/FilterQuery";
 import RouteValueKeys from "../models/routeValueKeys";
+import { MetaDataContext } from "./MetaDataContextProvider";
 
 // eslint-disable-next-line no-spaced-func
 export const FilterValuesContext = createContext<[
@@ -11,6 +14,8 @@ export const FilterValuesContext = createContext<[
   FilterQuery | null, (data: FilterQuery) => void]>([null, () => {}]);
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
+  const [isReady, metaData] = useContext(MetaDataContext);
+
   const [data, setData] = useState<FilterQuery | null>(null);
 
   const [regions, setRegions] = useRouteState<Array<string>>(
@@ -40,18 +45,21 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
 
   // set initial data value from route
   useEffect(() => {
-    if (data != null) {
+    if (data != null || !isReady) {
       return;
     }
     setData({
-      startDate: startDate == null ? null : new Date(startDate),
-      endDate: endDate == null ? null : new Date(endDate),
+      startDate: startDate == null ? new Date(Date.parse(metaData.minDate)) : new Date(startDate),
+      endDate: endDate == null ? new Date(Date.parse(metaData.maxDate)) : new Date(endDate),
       regions,
       excludedRegions,
       packageTypes,
       productionTypes,
     });
-  }, [regions, excludedRegions, packageTypes, productionTypes, startDate, endDate, data]);
+  }, [
+    regions, excludedRegions, packageTypes, productionTypes,
+    startDate, endDate, data, isReady, metaData,
+  ]);
 
   const setDataExternal = (newData: FilterQuery) => {
     setData(newData);
