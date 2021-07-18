@@ -1,20 +1,20 @@
-import { useState, useContext } from "react";
-import { useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
+
 import { FilterValuesContext } from "../containers/FilterValuesContextProvider";
 
 type TType = {} | null;
 const useFilteredApi = <T extends TType>(route: string): [boolean, T] => {
-  const [filterValues ] = useContext(FilterValuesContext);
+  const [filterValues] = useContext(FilterValuesContext);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [data, setData] = useState<T>(null as T);
 
   useEffect(() => {
     const worker = async () => {
-      if(filterValues == null){
+      if (filterValues == null) {
         return;
       }
       // build query parameter
-      var searchParams = new URLSearchParams();
+      const searchParams = new URLSearchParams();
       if (filterValues.startDate != null) {
         searchParams.set(
           "startDate",
@@ -25,23 +25,23 @@ const useFilteredApi = <T extends TType>(route: string): [boolean, T] => {
         searchParams.set("endDate", filterValues.endDate?.toISOString() ?? "");
       }
 
-      filterValues.regions.forEach(region => {
+      filterValues.regions.forEach((region) => {
         searchParams.append("regions", region);
       });
-      filterValues.excludedRegions.forEach(region => {
+      filterValues.excludedRegions.forEach((region) => {
         searchParams.append("excludedRegions", region);
       });
 
-      filterValues.packageTypes.forEach(packageType => {
+      filterValues.packageTypes.forEach((packageType) => {
         searchParams.append("packageTypes", packageType.toString());
       });
-      filterValues.productionTypes.forEach(productionType => {
+      filterValues.productionTypes.forEach((productionType) => {
         searchParams.append("productionTypes", productionType.toString());
       });
 
       const response = await fetch(`${route}?${searchParams.toString()}`);
-      const data = await response.json();
-      setData(data);
+      const apiData = await response.json();
+      setData(apiData);
       setIsReady(true);
     };
 

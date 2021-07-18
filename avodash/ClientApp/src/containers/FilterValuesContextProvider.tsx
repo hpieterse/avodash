@@ -1,12 +1,14 @@
-import React, { createContext, useState } from "react";
-import { useEffect } from "react";
+/* eslint-disable func-call-spacing */
+import React, { createContext, useState, useEffect } from "react";
+
 import useRouteState from "../hooks/useRouteState";
 import { FilterQuery } from "../models/FilterQuery";
-import { RouteValueKeys } from "../models/routeValueKeys";
+import RouteValueKeys from "../models/routeValueKeys";
 
-export const FilterValuesContext = createContext<
-  [FilterQuery | null, (data: FilterQuery) => void]
->([null, () => {}]);
+// eslint-disable-next-line no-spaced-func
+export const FilterValuesContext = createContext<[
+  // eslint-disable-next-line no-unused-vars
+  FilterQuery | null, (data: FilterQuery) => void]>([null, () => {}]);
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const [data, setData] = useState<FilterQuery | null>(null);
@@ -44,21 +46,21 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     setData({
       startDate: startDate == null ? null : new Date(startDate),
       endDate: endDate == null ? null : new Date(endDate),
-      regions: regions,
-      excludedRegions: excludedRegions,
-      packageTypes: packageTypes,
-      productionTypes: productionTypes,
+      regions,
+      excludedRegions,
+      packageTypes,
+      productionTypes,
     });
   }, [regions, excludedRegions, packageTypes, productionTypes, startDate, endDate, data]);
 
-  const setDataExternal = (data: FilterQuery) => {
-    setData(data);
-    setStartDate(data.startDate?.getTime() ?? null);
-    setEndDate(data.endDate?.getTime() ?? null);
-    setRegions(data.regions);
-    setExcludedRegions(data.excludedRegions);
-    setPackageTypes(data.packageTypes);
-    setProductionTypes(data.productionTypes);
+  const setDataExternal = (newData: FilterQuery) => {
+    setData(newData);
+    setStartDate(newData.startDate?.getTime() ?? null);
+    setEndDate(newData.endDate?.getTime() ?? null);
+    setRegions(newData.regions);
+    setExcludedRegions(newData.excludedRegions);
+    setPackageTypes(newData.packageTypes);
+    setProductionTypes(newData.productionTypes);
   };
 
   return (

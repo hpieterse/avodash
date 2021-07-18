@@ -8,6 +8,7 @@ type TType = {} | null;
 const useRouteState = <T extends TType>(
   shortName: string,
   defaultValue: T
+// eslint-disable-next-line no-unused-vars
 ): [T, (newValue: T) => void] => {
   const currentValue = useRef<T>();
 

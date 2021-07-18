@@ -3,13 +3,13 @@ import { MetaData } from "../models/metaData";
 
 type MetaDataContextData = [ boolean, MetaData ];
 export const MetaDataContext = createContext<MetaDataContextData>([
-  false, 
+  false,
   {} as MetaData,
 ]);
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const [metaData, setMetaData] = useState<MetaDataContextData>([
-    false, 
+    false,
     {} as MetaData,
   ]);
 

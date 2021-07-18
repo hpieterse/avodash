@@ -6,7 +6,7 @@ import { FilterValuesContext } from "../../containers/FilterValuesContextProvide
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
 import useFilteredApi from "../../hooks/useFilteredApi";
 import { TopRegion } from "../../models/topRegion";
-import { formatAvocadoCount } from "../../helpers/formatters";
+import formatAvocadoCount from "../../helpers/formatters";
 
 const TopRegions = ({ className }: { className?: string }) => {
   const [dataReady, data] = useFilteredApi<Array<TopRegion>>("/dashboard/top");
