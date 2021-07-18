@@ -79,7 +79,7 @@ const PriceOverTimeChart = () => {
       data={chartData}
       curve="monotoneX"
       margin={{
-        top: 50, right: 110, bottom: 50, left: 60,
+        top: 10, bottom: 80, right: 0, left: 45,
       }}
       xScale={{
         type: "time",
@@ -101,15 +101,15 @@ const PriceOverTimeChart = () => {
         legendPosition: "middle",
       }}
       axisLeft={{
-        legend: "Average price per avocado ($)",
+        legend: "Average price ($)",
         legendOffset: -40,
-        legendPosition: "middle",
+        legendPosition: "start",
       }}
       legends={[
         {
-          anchor: "right",
-          translateX: 100,
-          direction: "column",
+          anchor: "bottom-left",
+          translateY: 80,
+          direction: "row",
           itemWidth: 80,
           itemHeight: 20,
           onClick: (e) => {
