@@ -94,12 +94,12 @@ namespace avodash.Controllers
         public Task<ChartMetaData<IEnumerable<ChartSeries<string, string, decimal>>>> VolumeVsTime([FromQuery] FilterQuery filterQuery)
         {
             var filterOnPackageType = filterQuery.PackageTypes?.Any() ?? false;
-            var includeLargeBag = filterQuery.PackageTypes?.Any(c => c == PackageType.LargeBag) ?? false;
-            var includePLU4046 = filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4046) ?? false;
-            var includePLU4225 = filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4225) ?? false;
-            var includePLU4770 = filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4770) ?? false;
-            var includeSmallBag = filterQuery.PackageTypes?.Any(c => c == PackageType.SmallBag) ?? false;
-            var includeXLargeBag = filterQuery.PackageTypes?.Any(c => c == PackageType.XLargeBag) ?? false;
+            var includePLU4770 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4770);
+            var includePLU4046 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4046);
+            var includePLU4225 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4225);
+            var includeSmallBag = filterQuery.IsPackageTypeIncluded(PackageType.SmallBag);
+            var includeLargeBag = filterQuery.IsPackageTypeIncluded(PackageType.LargeBag);
+            var includeXLargeBag = filterQuery.IsPackageTypeIncluded(PackageType.XLargeBag);
 
             var data = _dataStore.FilteredData(filterQuery)
                 .OrderBy(c => c.Date)
@@ -135,7 +135,7 @@ namespace avodash.Controllers
                 });
 
             var maxValue = data.SelectMany(s => s.Data.Select(d => d.Y)).Max();
-             
+
 
             var divisor = maxValue switch
             {
@@ -148,12 +148,12 @@ namespace avodash.Controllers
             {
                 Data = data.Select(s => new ChartSeries<string, string, decimal>
                 {
-                   Id = s.Id,
-                   Data = s.Data.Select(d => new ChartDataPoint<string, decimal>
-                   {
-                       X = d.X,
-                       Y = d.Y / divisor,
-                   })
+                    Id = s.Id,
+                    Data = s.Data.Select(d => new ChartDataPoint<string, decimal>
+                    {
+                        X = d.X,
+                        Y = d.Y / divisor,
+                    })
                 }),
                 ValueDivisor = divisor,
             });
@@ -163,13 +163,12 @@ namespace avodash.Controllers
         [Route("[controller]/volume-v-price")]
         public Task<ChartMetaData<IEnumerable<VolumeBarChartDataPoint>>> VolumeVsPrice([FromQuery] FilterQuery filterQuery)
         {
-            var filterOnPackageType = filterQuery.PackageTypes?.Any() ?? false;
-            var includePLU4770 = !filterOnPackageType || (filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4770) ?? false);
-            var includePLU4046 = !filterOnPackageType || (filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4046) ?? false);
-            var includePLU4225 = !filterOnPackageType || (filterQuery.PackageTypes?.Any(c => c == PackageType.PLU4225) ?? false);
-            var includeSmallBag = !filterOnPackageType || (filterQuery.PackageTypes?.Any(c => c == PackageType.SmallBag) ?? false);
-            var includeLargeBag = !filterOnPackageType || (filterQuery.PackageTypes?.Any(c => c == PackageType.LargeBag) ?? false);
-            var includeXLargeBag = !filterOnPackageType || (filterQuery.PackageTypes?.Any(c => c == PackageType.XLargeBag) ?? false);
+            var includePLU4770 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4770);
+            var includePLU4046 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4046);
+            var includePLU4225 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4225);
+            var includeSmallBag = filterQuery.IsPackageTypeIncluded(PackageType.SmallBag);
+            var includeLargeBag = filterQuery.IsPackageTypeIncluded(PackageType.LargeBag);
+            var includeXLargeBag = filterQuery.IsPackageTypeIncluded(PackageType.XLargeBag);
 
             var data = _dataStore.FilteredData(filterQuery)
                 .OrderBy(m => m.AveragePrice)
@@ -178,7 +177,7 @@ namespace avodash.Controllers
                         new VolumeBarChartDataPoint
                         {
                             PriceRange = $"${grouping.Key} to ${grouping.Key + 1}",
-                            PLU4770 = includePLU4770 ?  grouping.Sum(c => c.PLU4770) : 0,
+                            PLU4770 = includePLU4770 ? grouping.Sum(c => c.PLU4770) : 0,
                             PLU4046 = includePLU4046 ? grouping.Sum(c => c.PLU4046) : 0,
                             PLU4225 = includePLU4225 ? grouping.Sum(c => c.PLU4225) : 0,
                             XLargeBags = includeXLargeBag ? grouping.Sum(c => c.XLargeBags) : 0,
@@ -188,7 +187,7 @@ namespace avodash.Controllers
 
 
             var maxValue = data.Max(c =>
-                c.PLU4046 + c.PLU4225 + c.PLU4770 
+                c.PLU4046 + c.PLU4225 + c.PLU4770
                 + c.SmallBags + c.LargeBags + c.XLargeBags);
 
             var subtractor = maxValue switch
@@ -199,17 +198,50 @@ namespace avodash.Controllers
             };
             return Task.FromResult(new ChartMetaData<IEnumerable<VolumeBarChartDataPoint>>
             {
-                Data = data.Select(c => new VolumeBarChartDataPoint {
-                    XLargeBags = Math.Round(c.XLargeBags/subtractor, 2),
-                    LargeBags = Math.Round(c.LargeBags/subtractor, 2),
-                    SmallBags = Math.Round(c.SmallBags/subtractor, 2),
-                    PLU4770 = Math.Round(c.PLU4770/subtractor, 2),
-                    PLU4046 = Math.Round(c.PLU4046/subtractor, 2),
-                    PLU4225 = Math.Round(c.PLU4225/subtractor, 2),
+                Data = data.Select(c => new VolumeBarChartDataPoint
+                {
+                    XLargeBags = Math.Round(c.XLargeBags / subtractor, 2),
+                    LargeBags = Math.Round(c.LargeBags / subtractor, 2),
+                    SmallBags = Math.Round(c.SmallBags / subtractor, 2),
+                    PLU4770 = Math.Round(c.PLU4770 / subtractor, 2),
+                    PLU4046 = Math.Round(c.PLU4046 / subtractor, 2),
+                    PLU4225 = Math.Round(c.PLU4225 / subtractor, 2),
                     PriceRange = c.PriceRange,
                 }),
                 ValueDivisor = subtractor,
             });
+        }
+
+        [HttpGet]
+        [Route("[controller]/totals")]
+        public Task<TotalsData> Totals([FromQuery] FilterQuery filterQuery)
+        {
+            var includePLU4770 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4770);
+            var includePLU4046 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4046);
+            var includePLU4225 = filterQuery.IsPackageTypeIncluded(PackageType.PLU4225);
+            var includeSmallBag = filterQuery.IsPackageTypeIncluded(PackageType.SmallBag);
+            var includeLargeBag = filterQuery.IsPackageTypeIncluded(PackageType.LargeBag);
+            var includeXLargeBag = filterQuery.IsPackageTypeIncluded(PackageType.XLargeBag);
+
+            var filteredData = _dataStore.FilteredData(filterQuery);
+            var data = filteredData
+                .Aggregate(new TotalsData { }, (acc, measurement) =>
+                {
+                    acc.AveragePrice += measurement.AveragePrice;
+                    acc.XLargeBags += includeXLargeBag ? measurement.XLargeBags : 0;
+                    acc.LargeBags += includeLargeBag ? measurement.LargeBags : 0;
+                    acc.SmallBags += includeSmallBag ? measurement.SmallBags : 0;
+                    acc.PLU4046 += includePLU4046 ? measurement.PLU4046 : 0;
+                    acc.PLU4225 += includePLU4225 ? measurement.PLU4225 : 0;
+                    acc.PLU4770 += includePLU4770 ? measurement.PLU4770 : 0;
+                    acc.TotalVolume += measurement.TotalVolume;
+                    return acc;
+                }, acc =>
+                {
+                    acc.AveragePrice /= filteredData.Count();
+                    return acc;
+                });
+            return Task.FromResult(data);
         }
     }
 }

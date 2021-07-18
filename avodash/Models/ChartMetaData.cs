@@ -7,6 +7,7 @@
         /// are too larg to make sense of.
         /// </summary>
         public int ValueDivisor { get; set; }
+
         public TChartData Data { get; set; }
     }
 }

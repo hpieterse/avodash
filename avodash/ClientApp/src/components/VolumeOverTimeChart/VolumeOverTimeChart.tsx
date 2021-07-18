@@ -94,6 +94,7 @@ const VolumeOverTimeChart = () => {
     return (
       <ResponsiveLine
         data={data.data}
+        animate={false}
         curve="monotoneX"
         useMesh
         margin={{

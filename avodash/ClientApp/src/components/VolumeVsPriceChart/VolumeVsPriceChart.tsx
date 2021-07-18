@@ -68,6 +68,7 @@ const VolumeVsPriceChart = () => {
     return (
       <ResponsiveBar
         data={data.data as any}
+        animate={false}
         keys={keys}
         indexBy="priceRange"
         margin={{

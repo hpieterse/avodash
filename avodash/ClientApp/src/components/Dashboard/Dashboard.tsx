@@ -8,6 +8,7 @@ import PriceOverTimeChart from "../PriceOverTimeChart/PriceOverTimeChart";
 import VolumeOverTimeChart from "../VolumeOverTimeChart/VolumeOverTimeChart";
 import VolumeVsPriceChart from "../VolumeVsPriceChart/VolumeVsPriceChart";
 import ChartContainer from "../../containers/ChartContainer/ChartContainer";
+import TotalCard from "../TotalCard/TotalCard";
 
 const Dashboard = () => (
   <Container>
@@ -17,10 +18,11 @@ const Dashboard = () => (
     <Row>
       <Col xs={6} lg={8} xl={9}>
         <Row>
-          <Col xs={6} className="pt-5">TODO</Col>
-          <Col xs={6} className="pt-5">TODO</Col>
+          <Col xs={12}>
+            <TotalCard />
+          </Col>
           <Col xs={12} className="pt-5">
-            <ChartContainer orientation="horizontal" title="Average Price p Avocado">
+            <ChartContainer orientation="horizontal" title="Average Price per Avocado">
               <PriceOverTimeChart />
             </ChartContainer>
           </Col>

@@ -1,5 +1,4 @@
-﻿using System;
-namespace avodash.Models
+﻿namespace avodash.Models
 {
     public class TopRegion
     {

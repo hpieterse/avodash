@@ -82,6 +82,7 @@ const PriceOverTimeChart = () => {
     <ResponsiveLine
       data={data}
       useMesh
+      animate={false}
       curve="monotoneX"
       margin={{
         top: 30, bottom: 50, right: 130, left: 70,

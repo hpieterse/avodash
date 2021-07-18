@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using avodash.Models.Enums;
 
 namespace avodash.Models
 {
@@ -14,7 +13,7 @@ namespace avodash.Models
 
         public IEnumerable<KeyValuePair<string, string>> Regions { get; set; }
 
-        public IEnumerable<KeyValuePair<int, string>> PackageTypes {get;set;}
+        public IEnumerable<KeyValuePair<int, string>> PackageTypes { get; set; }
 
         public IEnumerable<KeyValuePair<int, string>> PackageTypeShortNames { get; set; }
     }
