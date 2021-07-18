@@ -168,11 +168,11 @@ namespace avodash.Controllers
 
             var data = _dataStore.FilteredData(filterQuery)
                 .OrderBy(m => m.AveragePrice)
-                .GroupBy(m => Math.Floor(m.AveragePrice))
+                .GroupBy(m => PriceToBin(m.AveragePrice))
                 .Select((grouping, index) =>
                         new VolumeBarChartDataPoint
                         {
-                            PriceRange = $"${grouping.Key} to ${grouping.Key + 1}",
+                            PriceRange = $"${grouping.Key} to ${grouping.Key + (decimal)0.5}",
                             PLU4770 = includePLU4770 ? grouping.Sum(c => c.PLU4770) : 0,
                             PLU4046 = includePLU4046 ? grouping.Sum(c => c.PLU4046) : 0,
                             PLU4225 = includePLU4225 ? grouping.Sum(c => c.PLU4225) : 0,
@@ -238,6 +238,24 @@ namespace avodash.Controllers
                     return acc;
                 });
             return Task.FromResult(data);
+        }
+
+        private decimal PriceToBin(decimal price)
+        {
+            var check = (decimal)0;
+            var binSize = (decimal)0.5;
+            var max = 10;
+            do
+            {
+                if (price < check + binSize)
+                {
+                    return check;
+                }
+
+                check += binSize;
+            } while (check < max);
+
+            return max;
         }
     }
 }

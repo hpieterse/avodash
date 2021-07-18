@@ -7,7 +7,7 @@ import { ReactComponent as LogoSvg } from "../../svg/logo.svg";
 const Header = () => (
   <Navbar bg="light">
     <Container>
-      <Navbar.Brand>
+      <Navbar.Brand className="d-flex align-items-center fw-bold">
         <LogoSvg className={Styles.Logo} />
         {" "}
         Avodash

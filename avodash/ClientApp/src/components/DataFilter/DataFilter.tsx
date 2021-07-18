@@ -27,7 +27,7 @@ const DataFilter = () => {
 
   return (
     <div className="d-flex flex-wrap">
-      <div className={Styles.DateInput}>
+      <div className={`${Styles.DateInput} pe-2`}>
         <DateInput
           min={minDate}
           max={filterValues?.endDate ?? maxDate}
@@ -44,7 +44,7 @@ const DataFilter = () => {
           }}
         />
       </div>
-      <div className={Styles.DateInput}>
+      <div className={`${Styles.DateInput} pe-lg-2`}>
         <DateInput
           min={filterValues?.startDate ?? minDate}
           max={maxDate}
@@ -61,12 +61,12 @@ const DataFilter = () => {
           }}
         />
       </div>
-      <div className={`${Styles.FilterSelector} d-flex`}>
-        <FilterSelector className="flex-fill" />
+      <div className={`${Styles.FilterSelector} d-flex pt-2 pt-lg-0`}>
+        <FilterSelector className="flex-fill pe-2" />
         <Button
           className="flex-shrink-0"
           id="clear-filter"
-          variant="outline-danger"
+          variant="danger"
           size="sm"
           onClick={() => {
             if (filterValues == null) return;

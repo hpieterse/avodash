@@ -7,6 +7,7 @@ import useFilteredApi from "../../../hooks/useFilteredApi";
 import { ChartSeries } from "../../../models/ChartSeries";
 import { FilterValuesContext } from "../../../containers/FilterValuesContextProvider";
 import { MetaDataContext } from "../../../containers/MetaDataContextProvider";
+import useChartAxisSize from "../../../hooks/useChartAxisSize";
 
 const PriceOverTimeChart = () => {
   const data = useFilteredApi<Array<ChartSeries<number|string, string, number>>>(
@@ -46,43 +47,14 @@ const PriceOverTimeChart = () => {
     });
   }, [setFilterValues]);
 
-  // determine time axis ticks
-  const { tickValues, format } = useMemo(() => {
-    const timeDeltaDays = (
-      (filterValues?.endDate?.getTime() ?? 0) - (filterValues?.startDate?.getTime() ?? 0)
-    ) / (60 * 60 * 24 * 1000);
-
-    let tickValuesInternal = "every 1 year";
-    let formatInternal = "%Y";
-
-    if (timeDeltaDays < 14) {
-      tickValuesInternal = "every 1 day";
-      formatInternal = "%Y-%m-%d";
-    } else if (timeDeltaDays < 31 * 2) {
-      tickValuesInternal = "every 2 week";
-      formatInternal = "%Y-%m-%d";
-    } else if (timeDeltaDays < 365 / 2) {
-      tickValuesInternal = "every 1 month";
-      formatInternal = "%Y-%m";
-    } else if (timeDeltaDays < 365) {
-      tickValuesInternal = "every 3 month";
-      formatInternal = "%Y-%m";
-    } else if (timeDeltaDays < 600) {
-      tickValuesInternal = "every 6 month";
-      formatInternal = "%Y-%m";
-    }
-
-    return {
-      tickValues: tickValuesInternal,
-      format: formatInternal,
-    };
-  }, [filterValues?.endDate, filterValues?.startDate]);
+  const [tickValues, format] = useChartAxisSize();
 
   const chart = useMemo(() => (
     <ResponsiveLine
       data={data}
       useMesh
       curve="monotoneX"
+      enablePoints={false}
       margin={{
         top: 30, bottom: 50, right: 130, left: 70,
       }}
@@ -102,7 +74,7 @@ const PriceOverTimeChart = () => {
         tickRotation: 0,
         format,
         legend: "Time",
-        legendOffset: 36,
+        legendOffset: 40,
         legendPosition: "middle",
       }}
       axisLeft={{
@@ -112,9 +84,9 @@ const PriceOverTimeChart = () => {
       }}
       legends={[
         {
-          anchor: "bottom-right",
+          anchor: "right",
           translateX: 120,
-          translateY: 0,
+          translateY: -20,
           direction: "column",
           itemWidth: 100,
           itemHeight: 20,
@@ -131,6 +103,13 @@ const PriceOverTimeChart = () => {
           ],
         },
       ]}
+      theme={{
+        grid: {
+          line: {
+            stroke: "#eeeeee",
+          },
+        },
+      }}
     />
   ), [data, tickValues, format, addProductionType]);
 

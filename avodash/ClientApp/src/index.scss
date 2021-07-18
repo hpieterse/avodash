@@ -1,8 +1,13 @@
 $danger: #f47560;
 $primary: #61cdbb;
+$card-border-width: 2px;
 
 @import "~bootstrap/scss/bootstrap";
 @import "~react-bootstrap-typeahead/css/Typeahead.css";
+
+.btn-danger {
+  color:white !important;
+}
 
 .rbt-input-multi.focus {
   

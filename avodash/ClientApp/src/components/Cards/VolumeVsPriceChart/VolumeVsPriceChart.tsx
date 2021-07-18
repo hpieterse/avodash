@@ -78,7 +78,7 @@ const VolumeVsPriceChart = () => {
         axisBottom={{
           legend: "Price",
           legendPosition: "middle",
-          legendOffset: 32,
+          legendOffset: 40,
         }}
         axisLeft={{
           legend: `Volume (${valueSuffix} avocados)`,
@@ -89,7 +89,7 @@ const VolumeVsPriceChart = () => {
         legends={[
           {
             dataFrom: "keys",
-            anchor: "bottom-right",
+            anchor: "right",
             direction: "column",
             justify: false,
             translateX: 120,
@@ -113,6 +113,13 @@ const VolumeVsPriceChart = () => {
             ],
           },
         ]}
+        theme={{
+          grid: {
+            line: {
+              stroke: "#eeeeee",
+            },
+          },
+        }}
       />
     );
   }, [data, addPackagingType]);

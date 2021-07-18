@@ -12,26 +12,26 @@ import TotalCard from "../Cards/TotalCard/TotalCard";
 
 const Dashboard = () => (
   <Container className="pb-5">
-    <Row className="pt-5">
+    <Row className="pt-4">
       <DataFilter />
     </Row>
     <Row>
-      <Col xs={6} lg={8} xl={9}>
+      <Col xs={12} md={8} lg={8} xl={9}>
         <Row>
           <Col xs={12}>
             <TotalCard />
           </Col>
-          <Col xs={12} className="pt-5">
+          <Col xs={12} className="pt-4">
             <ChartContainer orientation="horizontal" title="Average Price per Avocado">
               <PriceOverTimeChart />
             </ChartContainer>
           </Col>
-          <Col xs={12} className="pt-5">
+          <Col xs={12} className="pt-4">
             <ChartContainer orientation="horizontal" title="Total Volume">
               <VolumeOverTimeChart />
             </ChartContainer>
           </Col>
-          <Col xs={12} className="pt-5">
+          <Col xs={12} className="pt-4">
             <ChartContainer orientation="vertical" title="Volume vs Price">
               <VolumeVsPriceChart />
             </ChartContainer>
@@ -39,7 +39,7 @@ const Dashboard = () => (
         </Row>
       </Col>
 
-      <Col xs={6} lg={4} xl={3} className="pt-5">
+      <Col xs={12} md={4} lg={4} xl={3} className="pt-4">
         <TopRegions />
       </Col>
     </Row>

@@ -48,7 +48,7 @@ const TopRegions = ({ className }: { className?: string }) => {
   return (
     <Card className={className}>
       <Card.Body>
-        <Card.Title>Top Volume Regions</Card.Title>
+        <Card.Title>Top 10 Regions by Volume</Card.Title>
         <div>
           <ListGroup variant="flush">
             {data.map((topRegion, index) => {

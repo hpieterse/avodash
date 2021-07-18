@@ -115,20 +115,20 @@ const TotalCard = () => {
 
   return (
     <Row>
-      <Col sm={12} md={12} lg={8} xl={6} className="pt-5">
+      <Col sm={12} md={12} lg={8} xl={6} className="pt-4">
         <Card>
-          <Card.Body>
-            <div className="d-flex align-items-center">
+          <Card.Body className="d-flex align-items-center">
+            <div className="d-flex align-items-center mx-auto">
               <div className={`${Styles.Card}`}>
                 {pieChart}
               </div>
-              <div className="flex-fill">
+              <div className="">
                 <h3 className="mb-0">
                   {data.totalVolume === null
                     ? "..."
                     : formatAvocadoCount(data.totalVolume ?? 0)}
                 </h3>
-                <span className="text-muted">Avocados</span>
+                <span className="text-muted">Avocados sold</span>
               </div>
             </div>
 
@@ -136,10 +136,10 @@ const TotalCard = () => {
         </Card>
 
       </Col>
-      <Col lg={4} md={12} xl={6} className="pt-5">
+      <Col lg={4} md={12} xl={6} className="pt-4">
         <Card>
-          <Card.Body>
-            <div className={`${Styles.PriceCard} d-flex flex-column justify-content-center`}>
+          <Card.Body className="d-flex align-items-center">
+            <div className={`${Styles.PriceCard} d-flex flex-column justify-content-center text-center mx-auto`}>
               <h3 className="mb-0">
                 {`$${data.averagePrice?.toFixed(2) ?? "..."}`}
               </h3>
