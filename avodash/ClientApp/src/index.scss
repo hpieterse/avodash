@@ -1,14 +1,28 @@
+$danger: #f47560;
+$primary: #61cdbb;
+
 @import "~bootstrap/scss/bootstrap";
 @import "~react-bootstrap-typeahead/css/Typeahead.css";
 
+.rbt-input-multi.focus {
+  
+    border-color: $input-focus-border-color  !important;
+    @include box-shadow($input-box-shadow, $input-focus-box-shadow);
+}
+
+div.rbt-token {
+  color: $badge-color;
+  background: $primary;
+}
+  
 .close {
   border: 0;
   background: transparent;
 }
 
 .icon-small {
-  width: 14px;
+  height: 14px;
 }
 .icon-medium {
-  width: 20px;
+  height: 20px;
 }

@@ -2,11 +2,11 @@ import React, {
   useContext, useRef, useMemo, useEffect, useCallback,
 } from "react";
 import { ResponsiveBar } from "@nivo/bar";
-import useFilteredApi from "../../hooks/useFilteredApi";
-import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
-import { MetaDataContext } from "../../containers/MetaDataContextProvider";
-import { VolumeBarChartDataPoint } from "../../models/VolumeBarChartDataPoint";
-import { ChartMetaData } from "../../models/ChartMetaData";
+import useFilteredApi from "../../../hooks/useFilteredApi";
+import { FilterValuesContext } from "../../../containers/FilterValuesContextProvider";
+import { MetaDataContext } from "../../../containers/MetaDataContextProvider";
+import { VolumeBarChartDataPoint } from "../../../models/VolumeBarChartDataPoint";
+import { ChartMetaData } from "../../../models/ChartMetaData";
 
 const VolumeVsPriceChart = () => {
   const data = useFilteredApi<ChartMetaData<Array<VolumeBarChartDataPoint>>>(
@@ -68,7 +68,6 @@ const VolumeVsPriceChart = () => {
     return (
       <ResponsiveBar
         data={data.data as any}
-        animate={false}
         keys={keys}
         indexBy="priceRange"
         margin={{

@@ -5,12 +5,12 @@ import React, {
 
 import { Card, Col, Row } from "react-bootstrap";
 import Styles from "./TotalCard.module.scss";
-import { MetaDataContext } from "../../containers/MetaDataContextProvider";
-import useFilteredApi from "../../hooks/useFilteredApi";
-import { TotalsData } from "../../models/TotalsData";
-import PackageType from "../../models/PackageType";
-import formatAvocadoCount from "../../helpers/formatters";
-import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
+import { MetaDataContext } from "../../../containers/MetaDataContextProvider";
+import useFilteredApi from "../../../hooks/useFilteredApi";
+import { TotalsData } from "../../../models/TotalsData";
+import PackageType from "../../../models/enums/PackageType";
+import formatAvocadoCount from "../../../helpers/formatters";
+import { FilterValuesContext } from "../../../containers/FilterValuesContextProvider";
 
 const TotalCard = () => {
   const data = useFilteredApi<TotalsData>(
@@ -97,7 +97,6 @@ const TotalCard = () => {
         margin={{
           top: 15, right: 15, bottom: 15, left: 15,
         }}
-        animate={false}
         innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}

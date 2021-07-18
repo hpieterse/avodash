@@ -1,9 +1,11 @@
 import React, { useMemo, useContext } from "react";
-import FilterSelector from "../FilterSelector/FilterSelector";
+import Button from "react-bootstrap/Button";
+import FilterSelector from "./FilterSelector/FilterSelector";
 import { MetaDataContext } from "../../containers/MetaDataContextProvider";
 import Styles from "./DateFilter.module.scss";
 import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
-import DateInput from "../DateInput/DateInput";
+import DateInput from "./DateInput/DateInput";
+import { ReactComponent as FilterSvg } from "../../svg/filter-light.svg";
 
 const DataFilter = () => {
   const [isReady, metaData] = useContext(MetaDataContext);
@@ -59,8 +61,29 @@ const DataFilter = () => {
           }}
         />
       </div>
-      <div className={Styles.FilterSelector}>
-        <FilterSelector />
+      <div className={`${Styles.FilterSelector} d-flex`}>
+        <FilterSelector className="flex-fill" />
+        <Button
+          className="flex-shrink-0"
+          id="clear-filter"
+          variant="outline-danger"
+          size="sm"
+          onClick={() => {
+            if (filterValues == null) return;
+            setFilterValues({
+              startDate: new Date(Date.parse(metaData.minDate)),
+              endDate: new Date(Date.parse(metaData.maxDate)),
+              regions: [],
+              excludedRegions: [],
+              packageTypes: [],
+              productionTypes: [],
+            });
+          }}
+        >
+          <FilterSvg className="icon-small me-2" />
+          Reset
+        </Button>
+
       </div>
     </div>
   );

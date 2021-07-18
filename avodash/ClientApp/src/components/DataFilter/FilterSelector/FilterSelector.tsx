@@ -1,12 +1,12 @@
 import React, { useMemo, useContext, useRef } from "react";
 import { Typeahead, Token } from "react-bootstrap-typeahead";
 import Button from "react-bootstrap/Button";
-import { MetaDataContext } from "../../containers/MetaDataContextProvider";
-import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
-import { FilterItem } from "../../models/FilterItem";
-import { ReactComponent as BoxOpenLightSvg } from "../../svg/box-open-light.svg";
-import { ReactComponent as MapMarkerAltLightSvg } from "../../svg/map-marker-alt-light.svg";
-import { ReactComponent as SeedlingLightSvg } from "../../svg/seedling-light.svg";
+import { MetaDataContext } from "../../../containers/MetaDataContextProvider";
+import { FilterValuesContext } from "../../../containers/FilterValuesContextProvider";
+import { FilterItem } from "../../../models/FilterItem";
+import { ReactComponent as BoxOpenLightSvg } from "../../../svg/box-open-light.svg";
+import { ReactComponent as MapMarkerAltLightSvg } from "../../../svg/map-marker-alt-light.svg";
+import { ReactComponent as SeedlingLightSvg } from "../../../svg/seedling-light.svg";
 import Styles from "./FilterSelector.module.scss";
 
 const FilterSelector = ({ className }: { className?: string }) => {
@@ -161,7 +161,7 @@ const FilterSelector = ({ className }: { className?: string }) => {
             <div>
               {option.type === "Region" ? (
                 <Button
-                  variant="danger"
+                  variant="outline-danger"
                   size="sm"
                   onClick={(e) => {
                     e.preventDefault();

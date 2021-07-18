@@ -3,15 +3,15 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import DataFilter from "../DataFilter/DataFilter";
-import TopRegions from "../TopRegions/TopRegions";
-import PriceOverTimeChart from "../PriceOverTimeChart/PriceOverTimeChart";
-import VolumeOverTimeChart from "../VolumeOverTimeChart/VolumeOverTimeChart";
-import VolumeVsPriceChart from "../VolumeVsPriceChart/VolumeVsPriceChart";
+import TopRegions from "../Cards/TopRegions/TopRegions";
+import PriceOverTimeChart from "../Cards/PriceOverTimeChart/PriceOverTimeChart";
+import VolumeOverTimeChart from "../Cards/VolumeOverTimeChart/VolumeOverTimeChart";
+import VolumeVsPriceChart from "../Cards/VolumeVsPriceChart/VolumeVsPriceChart";
 import ChartContainer from "../../containers/ChartContainer/ChartContainer";
-import TotalCard from "../TotalCard/TotalCard";
+import TotalCard from "../Cards/TotalCard/TotalCard";
 
 const Dashboard = () => (
-  <Container>
+  <Container className="pb-5">
     <Row className="pt-5">
       <DataFilter />
     </Row>

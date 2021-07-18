@@ -3,15 +3,19 @@ import React, {
   useCallback, useEffect,
 } from "react";
 import { ResponsiveLine } from "@nivo/line";
-import useFilteredApi from "../../hooks/useFilteredApi";
-import { ChartSeries } from "../../models/ChartSeries";
-import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
-import { MetaDataContext } from "../../containers/MetaDataContextProvider";
+import useFilteredApi from "../../../hooks/useFilteredApi";
+import { ChartSeries } from "../../../models/ChartSeries";
+import { FilterValuesContext } from "../../../containers/FilterValuesContextProvider";
+import { MetaDataContext } from "../../../containers/MetaDataContextProvider";
+import { ChartMetaData } from "../../../models/ChartMetaData";
 
-const PriceOverTimeChart = () => {
-  const data = useFilteredApi<Array<ChartSeries<number|string, string, number>>>(
-    "dashboard/price-v-time",
-    []
+const VolumeOverTimeChart = () => {
+  const data = useFilteredApi<ChartMetaData<Array<ChartSeries<number|string, string, number>>>>(
+    "dashboard/volume-v-time",
+    {
+      valueDivisor: 0,
+      data: [],
+    }
   );
   const [filterValues, setFilterValues] = useContext(FilterValuesContext);
   const [isMetaDataReady, metaData] = useContext(MetaDataContext);
@@ -78,64 +82,73 @@ const PriceOverTimeChart = () => {
     };
   }, [filterValues?.endDate, filterValues?.startDate]);
 
-  const chart = useMemo(() => (
-    <ResponsiveLine
-      data={data}
-      useMesh
-      animate={false}
-      curve="monotoneX"
-      margin={{
-        top: 30, bottom: 50, right: 130, left: 70,
-      }}
-      xScale={{
-        type: "time",
-        format: "%Y-%m-%d",
-        precision: "day",
-      }}
-      xFormat="time:%Y-%m-%d"
-      yScale={{
-        type: "linear", min: "auto", max: "auto", stacked: true, reverse: false,
-      }}
-      axisBottom={{
-        tickValues,
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        format,
-        legend: "Time",
-        legendOffset: 36,
-        legendPosition: "middle",
-      }}
-      axisLeft={{
-        legend: "Average price ($)",
-        legendOffset: -40,
-        legendPosition: "middle",
-      }}
-      legends={[
-        {
-          anchor: "bottom-right",
-          translateX: 120,
-          translateY: 0,
-          direction: "column",
-          itemWidth: 100,
-          itemHeight: 20,
-          onClick: (e) => {
-            addProductionType(e.id as string);
-          },
-          effects: [
-            {
-              on: "hover",
-              style: {
-                itemOpacity: 0.5,
-              },
+  const chart = useMemo(() => {
+    let valueSuffix = "";
+
+    if (data.valueDivisor === 1000000000) {
+      valueSuffix = "billion";
+    } else if (data.valueDivisor === 1000000) {
+      valueSuffix = "million";
+    }
+
+    return (
+      <ResponsiveLine
+        data={data.data}
+        curve="monotoneX"
+        useMesh
+        margin={{
+          top: 30, bottom: 50, right: 130, left: 70,
+        }}
+        xScale={{
+          type: "time",
+          format: "%Y-%m-%d",
+          precision: "day",
+        }}
+        xFormat="time:%Y-%m-%d"
+        yScale={{
+          type: "linear", min: "auto", max: "auto", stacked: true, reverse: false,
+        }}
+        axisBottom={{
+          tickValues,
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: 0,
+          format,
+          legend: "Time",
+          legendOffset: 36,
+          legendPosition: "middle",
+        }}
+        axisLeft={{
+          legend: `Volume (${valueSuffix} avocados)`,
+          legendOffset: -40,
+          legendPosition: "middle",
+        }}
+        legends={[
+          {
+            anchor: "bottom-right",
+            translateX: 120,
+            translateY: 0,
+            direction: "column",
+            itemWidth: 100,
+            itemHeight: 20,
+            onClick: (e) => {
+              addProductionType(e.id as string);
             },
-          ],
-        },
-      ]}
-    />
-  ), [data, tickValues, format, addProductionType]);
+            effects: [
+              {
+                on: "hover",
+                style: {
+                  itemOpacity: 0.5,
+                },
+              },
+            ],
+          },
+        ]}
+      />
+    );
+  }, [data, tickValues, format, addProductionType]);
 
   return chart;
 };
 
-export default PriceOverTimeChart;
+export default VolumeOverTimeChart;

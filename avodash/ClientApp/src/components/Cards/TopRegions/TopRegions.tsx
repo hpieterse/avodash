@@ -1,12 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, Fragment } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
-import { FilterValuesContext } from "../../containers/FilterValuesContextProvider";
-import { MetaDataContext } from "../../containers/MetaDataContextProvider";
-import useFilteredApi from "../../hooks/useFilteredApi";
-import { TopRegion } from "../../models/TopRegion";
-import formatAvocadoCount from "../../helpers/formatters";
+import { FilterValuesContext } from "../../../containers/FilterValuesContextProvider";
+import { MetaDataContext } from "../../../containers/MetaDataContextProvider";
+import useFilteredApi from "../../../hooks/useFilteredApi";
+import { TopRegion } from "../../../models/TopRegion";
+import formatAvocadoCount from "../../../helpers/formatters";
+import { ReactComponent as FilterSvg } from "../../../svg/filter-light.svg";
+import { ReactComponent as MinusSvg } from "../../../svg/minus-solid.svg";
+import { ReactComponent as PlusSvg } from "../../../svg/plus-solid.svg";
+import { ReactComponent as TimesSvg } from "../../../svg/times-solid.svg";
 
 const TopRegions = ({ className }: { className?: string }) => {
   const data = useFilteredApi<Array<TopRegion>>("/dashboard/top", []);
@@ -78,7 +82,6 @@ const TopRegions = ({ className }: { className?: string }) => {
                           <Button
                             id="add-filter"
                             className="me-2"
-                            type="checkbox"
                             size="sm"
                             variant={
                               isFiltered ? "primary" : "outline-primary"
@@ -87,17 +90,27 @@ const TopRegions = ({ className }: { className?: string }) => {
                               ? removeRegionFilter(topRegion.region)
                               : addRegionFilter(topRegion.region))}
                           >
-                            {isFiltered ? "Remove Filter" : "Filter"}
+                            {isFiltered ? (
+                              <Fragment>
+                                <TimesSvg className="icon-small me-1" />
+                                <FilterSvg className="icon-small" />
+                              </Fragment>
+                            ) : (
+                              <Fragment>
+                                <PlusSvg className="icon-small me-1" />
+                                <FilterSvg className="icon-small" />
+                              </Fragment>
+                            )}
                           </Button>
                           {!isFiltered ? (
                             <Button
                               id="exclude-filter"
-                              type="checkbox"
                               variant="outline-danger"
                               size="sm"
                               onClick={() => addRegionFilter(topRegion.region, true)}
                             >
-                              Exclude Region
+                              <MinusSvg className="icon-small me-1" />
+                              <FilterSvg className="icon-small" />
                             </Button>
                           ) : null}
                         </div>

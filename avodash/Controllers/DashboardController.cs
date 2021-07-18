@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using avodash.Data;
 using avodash.Models;
@@ -134,8 +131,7 @@ namespace avodash.Controllers
                     })
                 });
 
-            var maxValue = data.SelectMany(s => s.Data.Select(d => d.Y)).Max();
-
+            var maxValue = data.Count() == 0 ? 0 : data.SelectMany(s => s.Data.Select(d => d.Y)).Max();
 
             var divisor = maxValue switch
             {
@@ -186,7 +182,7 @@ namespace avodash.Controllers
                         });
 
 
-            var maxValue = data.Max(c =>
+            var maxValue = data.Count() == 0 ? 0 : data.Max(c =>
                 c.PLU4046 + c.PLU4225 + c.PLU4770
                 + c.SmallBags + c.LargeBags + c.XLargeBags);
 
@@ -238,7 +234,7 @@ namespace avodash.Controllers
                     return acc;
                 }, acc =>
                 {
-                    acc.AveragePrice /= filteredData.Count();
+                    acc.AveragePrice /= (filteredData.Count() == 0 ? 1 : filteredData.Count());
                     return acc;
                 });
             return Task.FromResult(data);
