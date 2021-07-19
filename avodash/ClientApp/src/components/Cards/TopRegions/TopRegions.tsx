@@ -14,8 +14,8 @@ import { ReactComponent as TimesSvg } from "../../../svg/times-solid.svg";
 
 const TopRegions = ({ className }: { className?: string }) => {
   const data = useFilteredApi<Array<TopRegion>>("/dashboard/top", []);
-  const [, metaData] = useContext(MetaDataContext);
-  const [filterValues, setFilterValues] = useContext(FilterValuesContext);
+  const { metaData } = useContext(MetaDataContext);
+  const { filterValues, setFilterValues } = useContext(FilterValuesContext);
 
   const addRegionFilter = (region: string, exclude: boolean = false) => {
     if (filterValues == null) {

@@ -10,8 +10,8 @@ import { ReactComponent as SeedlingLightSvg } from "../../../svg/seedling-light.
 import Styles from "./FilterSelector.module.scss";
 
 const FilterSelector = ({ className }: { className?: string }) => {
-  const [isReady, metaData] = useContext(MetaDataContext);
-  const [filterValues, setFilterValues] = useContext(FilterValuesContext);
+  const { isReady, metaData } = useContext(MetaDataContext);
+  const { filterValues, setFilterValues } = useContext(FilterValuesContext);
 
   const setSelectedFilters = (selection: Array<FilterItem>) => {
     const selectedRegions = selection

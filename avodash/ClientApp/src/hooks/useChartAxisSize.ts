@@ -2,7 +2,7 @@ import { useContext, useMemo } from "react";
 import { FilterValuesContext } from "../containers/FilterValuesContextProvider";
 
 const useChartAxisSize = () => {
-  const [filterValues] = useContext(FilterValuesContext);
+  const { filterValues } = useContext(FilterValuesContext);
 
   return useMemo(() => {
     const timeDeltaDays = (

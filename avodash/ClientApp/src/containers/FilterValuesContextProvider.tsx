@@ -1,6 +1,6 @@
 /* eslint-disable func-call-spacing */
 import React, {
-  createContext, useState, useEffect, useContext, useCallback,
+  createContext, useState, useEffect, useContext, useCallback, useRef,
 } from "react";
 
 import useRouteState from "../hooks/useRouteState";
@@ -9,12 +9,23 @@ import RouteValueKeys from "../models/RouteValueKeys";
 import { MetaDataContext } from "./MetaDataContextProvider";
 
 // eslint-disable-next-line no-spaced-func
-export const FilterValuesContext = createContext<[
+export const FilterValuesContext = createContext<{
+  filterValues: FilterQuery | null,
   // eslint-disable-next-line no-unused-vars
-  FilterQuery | null, (data: FilterQuery) => void]>([null, () => {}]);
+  setFilterValues: (data: FilterQuery) => void,
+  // eslint-disable-next-line no-unused-vars
+  addProductionType : (name: string) => void,
+  // eslint-disable-next-line no-unused-vars
+  addPackageType : (shortName: string) => void
+    }>({
+      filterValues: null,
+      setFilterValues: () => {},
+      addProductionType: () => {},
+      addPackageType: () => {},
+    });
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
-  const [isReady, metaData] = useContext(MetaDataContext);
+  const { isReady, metaData } = useContext(MetaDataContext);
 
   const [data, setData] = useState<FilterQuery | null>(null);
 
@@ -74,8 +85,59 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     setExcludedRegions, setPackageTypes, setProductionTypes,
   ]);
 
+  const dataRef = useRef(data);
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+
+  const addProductionType = useCallback((productionTypeName: string) => {
+    if (dataRef.current == null || !isReady) {
+      return;
+    }
+
+    const productionType = metaData.productionTypes
+      .find((p) => p.value === productionTypeName)?.key;
+    if (productionType == null) {
+      return;
+    }
+
+    setDataExternal({
+      ...dataRef.current,
+      productionTypes: [
+        ...(dataRef.current?.productionTypes ?? []),
+        productionType,
+      ],
+    });
+  }, [setDataExternal, isReady, metaData.productionTypes]);
+
+  const addPackageType = useCallback((packageTypeShortName: string) => {
+    if (dataRef.current == null || !isReady) {
+      return;
+    }
+
+    const packageType = metaData.packageTypeShortNames
+      .find((p) => p.value === packageTypeShortName)?.key;
+    if (packageType == null) {
+      return;
+    }
+
+    setDataExternal({
+      ...dataRef.current,
+      packageTypes: [
+        ...(dataRef.current?.packageTypes ?? []),
+        packageType,
+      ],
+    });
+  }, [setDataExternal, isReady, metaData.packageTypeShortNames]);
+
   return (
-    <FilterValuesContext.Provider value={[data, setDataExternal]}>
+    <FilterValuesContext.Provider value={{
+      filterValues: data,
+      setFilterValues: setDataExternal,
+      addProductionType,
+      addPackageType,
+    }}
+    >
       {children}
     </FilterValuesContext.Provider>
   );

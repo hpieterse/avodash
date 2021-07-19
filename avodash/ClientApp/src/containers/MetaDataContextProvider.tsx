@@ -1,23 +1,23 @@
 import React, { createContext, useState, useEffect } from "react";
 import { MetaData } from "../models/MetaData";
 
-type MetaDataContextData = [ boolean, MetaData ];
-export const MetaDataContext = createContext<MetaDataContextData>([
-  false,
-  {} as MetaData,
-]);
+type MetaDataContextData = { isReady: boolean, metaData: MetaData };
+export const MetaDataContext = createContext<MetaDataContextData>({
+  isReady: false,
+  metaData: {} as MetaData,
+});
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
-  const [metaData, setMetaData] = useState<MetaDataContextData>([
-    false,
-    {} as MetaData,
-  ]);
+  const [metaData, setMetaData] = useState<MetaDataContextData>({
+    isReady: false,
+    metaData: {} as MetaData,
+  });
 
   useEffect(() => {
     const worker = async () => {
       const response = await fetch("/metaData");
       const data = await response.json();
-      setMetaData([true, data as MetaData]);
+      setMetaData({ isReady: true, metaData: data as MetaData });
     };
 
     worker();

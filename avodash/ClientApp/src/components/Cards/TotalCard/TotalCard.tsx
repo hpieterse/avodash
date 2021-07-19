@@ -1,6 +1,6 @@
 import { ResponsivePie } from "@nivo/pie";
 import React, {
-  useContext, useEffect, useMemo, useRef, useCallback,
+  useContext, useMemo,
 } from "react";
 
 import { Card, Col, Row } from "react-bootstrap";
@@ -18,73 +18,43 @@ const TotalCard = () => {
     {} as TotalsData
   );
 
-  const [filterValues, setFilterValues] = useContext(FilterValuesContext);
-  const [isMetaDataReady, metaData] = useContext(MetaDataContext);
-
-  const filterValuesRef = useRef(filterValues);
-  useEffect(() => {
-    filterValuesRef.current = filterValues;
-  }, [filterValues]);
-
-  const metaDataRef = useRef({ metaData, isMetaDataReady });
-  useEffect(() => {
-    metaDataRef.current = { metaData, isMetaDataReady };
-  }, [metaData, isMetaDataReady]);
-
-  const addPackagingType = useCallback((packageTypeShortName: string) => {
-    if (filterValuesRef.current == null || !metaDataRef.current.isMetaDataReady) {
-      return;
-    }
-
-    const packageType = metaDataRef.current.metaData.packageTypeShortNames
-      .find((p) => p.value === packageTypeShortName)?.key;
-    if (packageType == null) {
-      return;
-    }
-
-    setFilterValues({
-      ...filterValuesRef.current,
-      packageTypes: [
-        ...(filterValuesRef.current?.packageTypes ?? []),
-        packageType,
-      ],
-    });
-  }, [setFilterValues]);
+  const { addPackageType } = useContext(FilterValuesContext);
+  const { isReady: isMetaDataReady, metaData } = useContext(MetaDataContext);
 
   const pieChart = useMemo(() => {
-    const formattedData = (metaDataRef.current?.isMetaDataReady ?? false) ? [
+    const formattedData = (isMetaDataReady ?? false) ? [
       {
-        id: metaDataRef.current.metaData
+        id: metaData
           .packageTypeShortNames.find((c) => c.key === PackageType.PLU4046)?.value
           ?? PackageType.PLU4046,
         value: data.plu4046,
       },
       {
-        id: metaDataRef.current.metaData
+        id: metaData
           .packageTypeShortNames.find((c) => c.key === PackageType.PLU4225)?.value
           ?? PackageType.PLU4225,
         value: data.plu4225,
       },
       {
-        id: metaDataRef.current.metaData
+        id: metaData
           .packageTypeShortNames.find((c) => c.key === PackageType.PLU4770)?.value
           ?? PackageType.PLU4770,
         value: data.plu4770,
       },
       {
-        id: metaDataRef.current.metaData
+        id: metaData
           .packageTypeShortNames.find((c) => c.key === PackageType.XLargeBag)?.value
           ?? PackageType.XLargeBag,
         value: data.xLargeBags,
       },
       {
-        id: metaDataRef.current.metaData
+        id: metaData
           .packageTypeShortNames.find((c) => c.key === PackageType.LargeBag)?.value
           ?? PackageType.LargeBag,
         value: data.largeBags,
       },
       {
-        id: metaDataRef.current.metaData
+        id: metaData
           .packageTypeShortNames.find((c) => c.key === PackageType.SmallBag)?.value
           ?? PackageType.SmallBag,
         value: data.smallBags,
@@ -106,12 +76,12 @@ const TotalCard = () => {
         enableArcLinkLabels={false}
         enableArcLabels={false}
         onClick={(e) => {
-          addPackagingType(e.id as string);
+          addPackageType(e.id as string);
         }}
       />
 
     );
-  }, [data, addPackagingType]);
+  }, [data, addPackageType, isMetaDataReady, metaData]);
 
   return (
     <Row>

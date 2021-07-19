@@ -1,12 +1,10 @@
 import React, {
-  useContext, useRef, useMemo,
-  useCallback, useEffect,
+  useContext, useMemo,
 } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import useFilteredApi from "../../../hooks/useFilteredApi";
 import { ChartSeries } from "../../../models/ChartSeries";
 import { FilterValuesContext } from "../../../containers/FilterValuesContextProvider";
-import { MetaDataContext } from "../../../containers/MetaDataContextProvider";
 import { ChartMetaData } from "../../../models/ChartMetaData";
 import useChartAxisSize from "../../../hooks/useChartAxisSize";
 
@@ -18,38 +16,7 @@ const VolumeOverTimeChart = () => {
       data: [],
     }
   );
-  const [filterValues, setFilterValues] = useContext(FilterValuesContext);
-  const [isMetaDataReady, metaData] = useContext(MetaDataContext);
-
-  const filterValuesRef = useRef(filterValues);
-  useEffect(() => {
-    filterValuesRef.current = filterValues;
-  }, [filterValues]);
-
-  const metaDataRef = useRef({ metaData, isMetaDataReady });
-  useEffect(() => {
-    metaDataRef.current = { metaData, isMetaDataReady };
-  }, [metaData, isMetaDataReady]);
-
-  const addProductionType = useCallback((productionTypeName: string) => {
-    if (filterValuesRef.current == null || !metaDataRef.current.isMetaDataReady) {
-      return;
-    }
-
-    const productionType = metaDataRef.current.metaData.productionTypes
-      .find((p) => p.value === productionTypeName)?.key;
-    if (productionType == null) {
-      return;
-    }
-
-    setFilterValues({
-      ...filterValuesRef.current,
-      productionTypes: [
-        ...(filterValuesRef.current?.productionTypes ?? []),
-        productionType,
-      ],
-    });
-  }, [setFilterValues]);
+  const { addProductionType } = useContext(FilterValuesContext);
 
   const [tickValues, format] = useChartAxisSize();
 

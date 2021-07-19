@@ -8,8 +8,8 @@ import DateInput from "./DateInput/DateInput";
 import { ReactComponent as FilterSvg } from "../../svg/filter-light.svg";
 
 const DataFilter = () => {
-  const [isReady, metaData] = useContext(MetaDataContext);
-  const [filterValues, setFilterValues] = useContext(FilterValuesContext);
+  const { isReady, metaData } = useContext(MetaDataContext);
+  const { filterValues, setFilterValues } = useContext(FilterValuesContext);
 
   const maxDate = useMemo(() => {
     if (!isReady) {

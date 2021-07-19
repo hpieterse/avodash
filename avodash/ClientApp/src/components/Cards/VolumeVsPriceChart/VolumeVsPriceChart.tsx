@@ -1,5 +1,5 @@
 import React, {
-  useContext, useRef, useMemo, useEffect, useCallback,
+  useContext, useRef, useMemo, useEffect,
 } from "react";
 import { ResponsiveBar } from "@nivo/bar";
 import useFilteredApi from "../../../hooks/useFilteredApi";
@@ -16,38 +16,13 @@ const VolumeVsPriceChart = () => {
       data: [],
     }
   );
-  const [filterValues, setFilterValues] = useContext(FilterValuesContext);
-  const [isMetaDataReady, metaData] = useContext(MetaDataContext);
+  const { filterValues, addPackageType } = useContext(FilterValuesContext);
+  const { metaData } = useContext(MetaDataContext);
 
   const filterValuesRef = useRef(filterValues);
   useEffect(() => {
     filterValuesRef.current = filterValues;
   }, [filterValues]);
-
-  const metaDataRef = useRef({ metaData, isMetaDataReady });
-  useEffect(() => {
-    metaDataRef.current = { metaData, isMetaDataReady };
-  }, [metaData, isMetaDataReady]);
-
-  const addPackagingType = useCallback((packageTypeShortName: string) => {
-    if (filterValuesRef.current == null || !metaDataRef.current.isMetaDataReady) {
-      return;
-    }
-
-    const packageType = metaDataRef.current.metaData.packageTypeShortNames
-      .find((p) => p.value === packageTypeShortName)?.key;
-    if (packageType == null) {
-      return;
-    }
-
-    setFilterValues({
-      ...filterValuesRef.current,
-      packageTypes: [
-        ...(filterValuesRef.current?.packageTypes ?? []),
-        packageType,
-      ],
-    });
-  }, [setFilterValues]);
 
   const chart = useMemo(() => {
     let valueSuffix = "";
@@ -58,11 +33,9 @@ const VolumeVsPriceChart = () => {
       valueSuffix = "million";
     }
 
-    let keys = metaDataRef.current.metaData?.packageTypeShortNames?.map((p) => p.value) ?? [];
+    let keys = metaData?.packageTypeShortNames?.map((p) => p.value) ?? [];
     if ((filterValuesRef?.current?.packageTypes?.length ?? 0) > 0) {
-      keys = filterValuesRef?.current?.packageTypes.map((packageTypeId) => metaDataRef
-        .current
-        .metaData
+      keys = filterValuesRef?.current?.packageTypes.map((packageTypeId) => metaData
         .packageTypeShortNames.find((m) => m.key === packageTypeId)?.value ?? "") ?? keys;
     }
     return (
@@ -101,7 +74,7 @@ const VolumeVsPriceChart = () => {
             itemOpacity: 0.85,
             symbolSize: 20,
             onClick: (item) => {
-              addPackagingType(item.id as string);
+              addPackageType(item.id as string);
             },
             effects: [
               {
@@ -122,7 +95,7 @@ const VolumeVsPriceChart = () => {
         }}
       />
     );
-  }, [data, addPackagingType]);
+  }, [data, addPackageType, metaData]);
 
   return chart;
 };

@@ -6,7 +6,7 @@ import { FilterValuesContext } from "../containers/FilterValuesContextProvider";
 
 type TType = {};
 const useFilteredApi = <T extends TType>(route: string, defaultValue: T): T => {
-  const [filterValues] = useContext(FilterValuesContext);
+  const { filterValues } = useContext(FilterValuesContext);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [data, setData] = useState<T>(defaultValue);
 
