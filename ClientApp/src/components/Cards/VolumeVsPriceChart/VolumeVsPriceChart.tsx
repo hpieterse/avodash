@@ -31,6 +31,8 @@ const VolumeVsPriceChart = () => {
       valueSuffix = "billion";
     } else if (data.valueDivisor === 1000000) {
       valueSuffix = "million";
+    } else if (data.valueDivisor === 1000) {
+      valueSuffix = "thousand";
     }
 
     let keys = metaData?.packageTypeShortNames?.map((p) => p.value) ?? [];

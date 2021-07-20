@@ -5,12 +5,21 @@ $card-border-width: 2px;
 @import "~bootstrap/scss/bootstrap";
 @import "~react-bootstrap-typeahead/css/Typeahead.css";
 
-.btn-danger {
+// update button text color
+.btn.btn-danger,
+.btn.btn-primary
+{
   color:white !important;
 }
 
+.btn.btn-outline-danger,
+.btn.btn-outline-primary {
+  &:focus,&active,&:hover{
+    color:white !important;
+  }
+}
+
 .rbt-input-multi.focus {
-  
     border-color: $input-focus-border-color  !important;
     @include box-shadow($input-box-shadow, $input-focus-box-shadow);
 }

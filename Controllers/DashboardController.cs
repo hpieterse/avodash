@@ -137,6 +137,7 @@ namespace avodash.Controllers
             {
                 > 1000000000 => 1000000000, //billioon
                 > 1000000 => 1000000,//million
+                > 1000 => 1000,//thousands
                 _ => 1,
             };
 
@@ -190,6 +191,7 @@ namespace avodash.Controllers
             {
                 > 1000000000 => 1000000000, //billioon
                 > 1000000 => 1000000,//million
+                > 1000 => 1000,//thousands
                 _ => 1,
             };
             return Task.FromResult(new ChartMetaData<IEnumerable<VolumeBarChartDataPoint>>

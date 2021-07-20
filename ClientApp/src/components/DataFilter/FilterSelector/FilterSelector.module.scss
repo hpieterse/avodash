@@ -1,5 +1,5 @@
 @import "~bootstrap/scss/bootstrap";
 
-.FilterOptionLabel{
-  margin-left: $spacer * 0.5;
+ .Input :global(.rbt-input-multi.form-control){
+   height: 100%;
 }

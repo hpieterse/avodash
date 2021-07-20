@@ -7,6 +7,8 @@ import { FilterItem } from "../../../models/FilterItem";
 import { ReactComponent as BoxOpenLightSvg } from "../../../svg/box-open-light.svg";
 import { ReactComponent as MapMarkerAltLightSvg } from "../../../svg/map-marker-alt-light.svg";
 import { ReactComponent as SeedlingLightSvg } from "../../../svg/seedling-light.svg";
+import { ReactComponent as FilterSvg } from "../../../svg/filter-light.svg";
+import { ReactComponent as MinusSvg } from "../../../svg/minus-solid.svg";
 import Styles from "./FilterSelector.module.scss";
 
 const FilterSelector = ({ className }: { className?: string }) => {
@@ -110,11 +112,11 @@ const FilterSelector = ({ className }: { className?: string }) => {
   const getIcon = (option: FilterItem) => {
     switch (option.type) {
       case "PackageType":
-        return <BoxOpenLightSvg className="icon-small" />;
+        return <BoxOpenLightSvg className="icon-small flex-shrink-0" />;
       case "ProductionType":
-        return <SeedlingLightSvg className="icon-small" />;
+        return <SeedlingLightSvg className="icon-small flex-shrink-0" />;
       case "Region":
-        return <MapMarkerAltLightSvg className="icon-small" />;
+        return <MapMarkerAltLightSvg className="icon-small flex-shrink-0" />;
       default:
         return option.type;
     }
@@ -124,7 +126,7 @@ const FilterSelector = ({ className }: { className?: string }) => {
 
   return (
     <Typeahead<FilterItem>
-      className={className}
+      className={`${className} ${Styles.Input}`}
       ref={typeAhead}
       id="data-filter"
       multiple
@@ -150,15 +152,15 @@ const FilterSelector = ({ className }: { className?: string }) => {
         };
 
         return (
-          <div className="pt-2 px-2 d-flex align-items-center" key={index}>
+          <div className="pt-2 px-2 d-flex align-items-center text-wrap" key={index}>
             <div className="flex-fill">
               <div className="d-flex align-items-center">
                 {getIcon(option)}
-                <span className={Styles.FilterOptionLabel}>{option.value}</span>
+                <span className="ms-2">{option.value}</span>
               </div>
               <small className="text-muted">{getTypeText(option)}</small>
             </div>
-            <div>
+            <div className="ms-2">
               {option.type === "Region" ? (
                 <Button
                   variant="outline-danger"
@@ -178,7 +180,11 @@ const FilterSelector = ({ className }: { className?: string }) => {
                     }
                   }}
                 >
-                  Exclude Region
+                  <span className="d-none d-sm-block">
+                    Exclude Region
+                  </span>
+                  <MinusSvg className="icon-small me-1 d-sm-none" />
+                  <FilterSvg className="icon-small d-sm-none" />
                 </Button>
               ) : null}
             </div>
